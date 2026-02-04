@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Guide - Monkey Travel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            transition: background-color 0.3s;
+        }
+
+        body.dark {
+            background-color: #111827;
+        }
+
+        body.light {
+            background-color: #f9fafb;
+        }
+
+        .container {
+            max-width: 448px;
+            margin: 0 auto;
+            padding: 0; /* Remove padding from container to allow hero to span full width */
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            height: 200px; /* Adjust height as needed */
+            overflow: hidden;
+            border-bottom-left-radius: 1.5rem;
+            border-bottom-right-radius: 1.5rem;
+            background-image: url('WHITE ORCHID/white_orchid_3.webp'); /* Replace with your image */
+            background-color: #333; 
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+        }
+
+        .hero-content {
+            width: 100%;
+            padding: 1rem;
+            /* Dark overlay effect for better text readability */
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+            color: white; /* Default color for text over dark background */
+            padding: 0.25rem 0;
+            
+            /* Mimic the magenta/purple color from the mockup */
+            background: linear-gradient(to right, #9f24e7, #f200c4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5)); /* Subtle shadow for contrast */
+        }
+
+        /* Adjust padding for the rest of the content */
+        .language-selector, .player, .playlist, .empty-state {
+            padding: 1rem;
+        }
+
+        /* Header */
+
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem; /* Reduced margin to bring closer to language selector */
+            padding: 1rem; /* Add padding back to header content */
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(to bottom right, #9f24e7, #f200c4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+        }
+
+
+
+        .brand-info p {
+            font-size: 0.875rem; /* Slightly larger for better visibility next to logo */
+            transition: color 0.3s;
+        }
+
+
+
+        body.dark .brand-info p {
+            color: #9ca3af; /* Reverted to original color for better contrast */
+        }
+
+        body.light .brand-info p {
+            color: #6b7280;
+        }
+
+        .theme-toggle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        body.dark .theme-toggle {
+            background-color: #1f2937;
+            color: #fbbf24;
+        }
+
+        body.dark .theme-toggle:hover {
+            background-color: #374151;
+        }
+
+        body.light .theme-toggle {
+            background-color: white;
+            color: #9f24e7;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light .theme-toggle:hover {
+            background-color: #f3f4f6;
+        }
+
+	        /* Language Selector */
+	        .language-selector {
+	            position: relative;
+	            margin-bottom: 1rem;
+	            padding: 0 1rem; /* Add horizontal padding */
+	        }
+
+        .language-button {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 1rem;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        body.dark .language-button {
+            background-color: #1f2937;
+            color: white;
+        }
+
+        body.dark .language-button:hover {
+            background-color: #374151;
+        }
+
+        body.light .language-button {
+            background-color: white;
+            color: #111827;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light .language-button:hover {
+            background-color: #f9fafb;
+        }
+
+        .language-dropdown {
+            position: absolute;
+            width: 100%;
+            margin-top: 0.5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            z-index: 10;
+            display: none;
+        }
+
+        .language-dropdown.show {
+            display: block;
+        }
+
+        body.dark .language-dropdown {
+            background-color: #1f2937;
+        }
+
+        body.light .language-dropdown {
+            background-color: white;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .language-option {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        body.dark .language-option {
+            color: white;
+        }
+
+        body.dark .language-option:hover {
+            background-color: #374151;
+        }
+
+        body.light .language-option {
+            color: #111827;
+        }
+
+        body.light .language-option:hover {
+            background-color: #f3f4f6;
+        }
+
+        .language-option.active {
+            background: linear-gradient(to right, #9f24e7, #f200c4);
+            color: white;
+        }
+
+	        /* Player */
+	        .player {
+	            border-radius: 1.5rem;
+	            padding: 1.5rem;
+	            margin-bottom: 1rem;
+	            transition: all 0.3s;
+	            display: none;
+	            margin: 0 1rem 1rem 1rem; /* Add horizontal margin to respect container width */
+	        }
+
+        .player.show {
+            display: block;
+        }
+
+        body.dark .player {
+            background: linear-gradient(to bottom right, #1f2937, #111827);
+        }
+
+        body.light .player {
+            background: linear-gradient(to bottom right, white, #f9fafb);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        .album-art {
+            aspect-ratio: 1;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .album-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .album-content {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .album-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .track-info {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .track-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        body.dark .track-title {
+            color: white;
+        }
+
+        body.light .track-title {
+            color: #111827;
+        }
+
+        .track-language {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        body.dark .track-language {
+            color: #9ca3af;
+        }
+
+        body.light .track-language {
+            color: #6b7280;
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            appearance: none;
+            cursor: pointer;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-bar::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+        }
+
+        body.dark .time-display {
+            color: #9ca3af;
+        }
+
+        body.light .time-display {
+            color: #6b7280;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .control-btn {
+            padding: 0.75rem;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        body.dark .control-btn {
+            background-color: #374151;
+            color: white;
+        }
+
+        body.dark .control-btn:hover:not(:disabled) {
+            background-color: #4b5563;
+        }
+
+        body.light .control-btn {
+            background-color: #e5e7eb;
+            color: #111827;
+        }
+
+        body.light .control-btn:hover:not(:disabled) {
+            background-color: #d1d5db;
+        }
+
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .play-btn {
+            padding: 1.25rem;
+            background: linear-gradient(to right, #9f24e7, #f200c4);
+            color: white;
+            box-shadow: 0 10px 15px rgba(159, 36, 231, 0.3);
+        }
+
+        .play-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+
+        
+
+	        /* Playlist */
+	        .playlist {
+	            border-radius: 1.5rem;
+	            padding: 1rem;
+	            transition: all 0.3s;
+	            display: none;
+	            margin: 0 1rem 1rem 1rem; /* Add horizontal margin to respect container width */
+	        }
+
+        .playlist.show {
+            display: block;
+        }
+
+        body.dark .playlist {
+            background-color: #1f2937;
+        }
+
+        body.light .playlist {
+            background-color: white;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .playlist h3 {
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            padding: 0 0.5rem;
+        }
+
+        body.dark .playlist h3 {
+            color: white;
+        }
+
+        body.light .playlist h3 {
+            color: #111827;
+        }
+
+        .playlist-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .playlist-item {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-align: left;
+            transition: all 0.3s;
+        }
+
+        body.dark .playlist-item {
+            background-color: #374151;
+            color: white;
+        }
+
+        body.dark .playlist-item:hover {
+            background-color: #4b5563;
+        }
+
+        body.light .playlist-item {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+
+        body.light .playlist-item:hover {
+            background-color: #e5e7eb;
+        }
+
+        .playlist-item.active {
+            background: linear-gradient(to right, #9f24e7, #f200c4);
+            color: white;
+            box-shadow: 0 10px 15px rgba(159, 36, 231, 0.3);
+        }
+
+        .playlist-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .playlist-item.active .playlist-icon {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark .playlist-item:not(.active) .playlist-icon {
+            background-color: #4b5563;
+        }
+
+        body.light .playlist-item:not(.active) .playlist-icon {
+            background-color: #e5e7eb;
+        }
+
+        .playlist-title {
+            font-weight: 500;
+        }
+
+	        /* Empty State */
+	        .empty-state {
+	            border-radius: 1.5rem;
+	            padding: 3rem;
+	            text-align: center;
+	            transition: all 0.3s;
+	            margin: 0 1rem 1rem 1rem; /* Add horizontal margin to respect container width */
+	        }
+
+        body.dark .empty-state {
+            background-color: #1f2937;
+        }
+
+        body.light .empty-state {
+            background-color: white;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-text {
+            font-size: 1.125rem;
+        }
+
+        body.dark .empty-text {
+            color: #9ca3af;
+        }
+
+        body.light .empty-text {
+            color: #6b7280;
+        }
+
+        /* Icons */
+        .icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .icon-small {
+            width: 20px;
+            height: 20px;
+        }
+
+        .icon-large {
+            width: 32px;
+            height: 32px;
+        }
+    </style>
+</head>
+<body class="dark">
+	    <div class="container">
+	        <!-- Hero Section -->
+	        <div class="hero-section">
+	            <div class="hero-content">
+	                <h1 class="hero-title">WHITE ORCHID</h1>
+	            </div>
+	        </div>
+
+	        <!-- Header -->
+	        <div class="header">
+	            <div class="logo-section">
+	                <div class="logo">
+	                    <!-- Reemplaza con tu logo: <img src="logo_monkey.webp" alt="Logo"> -->
+	                    <img src="logo_monkey.webp" alt="Logo">
+	                </div>
+	                <div class="brand-info">
+	                    <p>Monkey Travel</p>
+	                </div>
+	            </div>
+	            <button class="theme-toggle" onclick="toggleTheme()">
+	                <svg class="icon" id="themeIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+	                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+	                </svg>
+	            </button>
+	        </div>
+
+	        <!-- Language Selector -->
+	        <div class="language-selector">
+            <button class="language-button" onclick="toggleLanguageDropdown()">
+                <span id="selectedLanguage">Seleccionar Idioma</span>
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            <div class="language-dropdown" id="languageDropdown"></div>
+        </div>
+
+        <!-- Player -->
+        <div class="player" id="player">
+            <div class="album-art" id="albumArt">
+                <!-- Reemplaza con tu portada: <img src="portada.jpg" alt="Portada"> -->
+                <img src="logo_monkey.webp" alt="Portada">
+            </div>
+
+            <div class="track-info">
+                <h2 class="track-title" id="trackTitle">Sin audio</h2>
+                <p class="track-language" id="trackLanguage"></p>
+            </div>
+
+            <div class="progress-section">
+                <input type="range" class="progress-bar" id="progressBar" min="0" max="100" value="0">
+                <div class="time-display">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="control-btn" onclick="previousTrack()" id="prevBtn">
+                    <svg class="icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                    </svg>
+                </button>
+                <button class="control-btn play-btn" onclick="togglePlay()" id="playBtn">
+                    <svg class="icon-large" id="playIcon" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+                <button class="control-btn" onclick="nextTrack()" id="nextBtn">
+                    <svg class="icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                    </svg>
+                </button>
+            </div>
+
+
+        </div>
+
+        <!-- Playlist -->
+        <div class="playlist" id="playlist">
+            <h3>Lista de Reproducción</h3>
+            <div class="playlist-items" id="playlistItems"></div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState">
+            <div class="empty-icon">🎧</div>
+            <p class="empty-text">Selecciona un idioma para comenzar a escuchar</p>
+        </div>
+
+        <audio id="audioPlayer"></audio>
+    </div>
+
+    <script>
+        // Base de datos de audios
+        const BASE_URL = "https://kevinsoler313askdiscovery-sudo.github.io/White_Orchid_Audios/";
+
+        const audioDatabase = {
+            Deutsch: [
+                { id: 1, title: '1. WILLKOMMEN | ABENDESSEN NACHTKREUZFAHRT', url: BASE_URL + 'german/1.bienvenidos_cena_crucero_nocturna_de.mp3' },
+                { id: 2, title: '2. CHAO-PHRAYA-FLUSS', url: BASE_URL + 'german/2.rio_chao_phraya_de.mp3' },
+                { id: 3, title: '3. WAT ARUN | TEMPEL DER MORGENRÖTE', url: BASE_URL + 'german/3.wat_arun_templo_del_amanecer_de.mp3' },
+                { id: 4, title: '4. DER GROSSE KÖNIGSPALAST UND WAT PHRA KAEW | TEMPEL DES SMARAGDBUDDHAS', url: BASE_URL + 'german/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_de.mp3' },
+                { id: 5, title: '5. RAMA-VIII-BRÜCKE', url: BASE_URL + 'german/5.puente_rama_viii_de.mp3' },
+                { id: 6, title: '6. PANORAMABLICKE AUF DAS FLUSSUFER', url: BASE_URL + 'german/6.vistas_panoramicas_rivera_de.mp3' },
+                { id: 7, title: '7. INTERNATIONALES UND THAILÄNDISCHES BUFFET', url: BASE_URL + 'german/7.buffet_internacional_y_tailandes_de.mp3' },
+                { id: 8, title: '8. ABSCHIEDSGRUSS', url: BASE_URL + 'german/8.saludo_final_de.mp3' }
+            ],
+            العربية: [
+                { id: 1, title: '1. مرحبًا بكم | عشاء رحلة بحرية ليلية', url: BASE_URL + 'arabic/1.bienvenidos_cena_crucero_nocturna_ar.mp3' },
+                { id: 2, title: '2. نهر تشاو فرايا', url: BASE_URL + 'arabic/2.rio_chao_phraya_ar.mp3' },
+                { id: 3, title: '3. وات آرون | معبد الفجر', url: BASE_URL + 'arabic/3.wat_arun_templo_del_amanecer_ar.mp3' },
+                { id: 4, title: '4. القصر الملكي الكبير ووات فرا كايو | معبد بوذا الزمردي', url: BASE_URL + 'arabic/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_ar.mp3' },
+                { id: 5, title: '5. جسر راما الثامن', url: BASE_URL + 'arabic/5.puente_rama_viii_ar.mp3' },
+                { id: 6, title: '6. مناظر بانورامية لضفاف النهر', url: BASE_URL + 'arabic/6.vistas_panoramicas_rivera_ar.mp3' },
+                { id: 7, title: '7. بوفيه عالمي وتايلاندي', url: BASE_URL + 'arabic/7.buffet_internacional_y_tailandes_ar.mp3' },
+                { id: 8, title: '8. تحية الوداع', url: BASE_URL + 'arabic/8.saludo_final_ar.mp3' }
+            ],
+            বাংলা: [
+                { id: 1, title: '1. স্বাগতম | রাতের নৌভ্রমণের নৈশভোজ', url: BASE_URL + 'bengali/1.bienvenidos_cena_crucero_nocturna_bn.mp3' },
+                { id: 2, title: '2. চাও ফ্রায়া নদী', url: BASE_URL + 'bengali/2.rio_chao_phraya_bn.mp3' },
+                { id: 3, title: '3. ওয়াট আরুন | ভোরের মন্দির', url: BASE_URL + 'bengali/3.wat_arun_templo_del_amanecer_bn.mp3' },
+                { id: 4, title: '4. গ্র্যান্ড রয়্যাল প্যালেস ও ওয়াট ফ্রা কায়েও | পান্না বুদ্ধের মন্দির', url: BASE_URL + 'bengali/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_bn.mp3' },
+                { id: 5, title: '5. রামা অষ্টম সেতু', url: BASE_URL + 'bengali/5.puente_rama_viii_bn.mp3' },
+                { id: 6, title: '6. নদীর তীরের মনোরম দৃশ্য', url: BASE_URL + 'bengali/6.vistas_panoramicas_rivera_bn.mp3' },
+                { id: 7, title: '7. আন্তর্জাতিক ও থাই বুফে', url: BASE_URL + 'bengali/7.buffet_internacional_y_tailandes_bn.mp3' },
+                { id: 8, title: '8. বিদায় সম্ভাষণ', url: BASE_URL + 'bengali/8.saludo_final_bn.mp3' }
+            ],
+            简体中_中国: [
+                { id: 1, title: '1. 欢迎 | 夜游游船晚宴', url: BASE_URL + 'mandarin_china/1.bienvenidos_cena_crucero_nocturna_zh.mp3' },
+                { id: 2, title: '2. 昭披耶河', url: BASE_URL + 'mandarin_china/2.rio_chao_phraya_zh.mp3' },
+                { id: 3, title: '3. 郑王庙 | 黎明寺', url: BASE_URL + 'mandarin_china/3.wat_arun_templo_del_amanecer_zh.mp3' },
+                { id: 4, title: '4. 大皇宫与玉佛寺 | 翡翠佛寺', url: BASE_URL + 'mandarin_china/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_zh.mp3' },
+                { id: 5, title: '5. 拉玛八世大桥', url: BASE_URL + 'mandarin_china/5.puente_rama_viii_zh.mp3' },
+                { id: 6, title: '6. 河岸全景美景', url: BASE_URL + 'mandarin_china/6.vistas_panoramicas_rivera_zh.mp3' },
+                { id: 7, title: '7. 国际与泰式自助餐', url: BASE_URL + 'mandarin_china/7.buffet_internacional_y_tailandes_zh.mp3' },
+                { id: 8, title: '8. 告别致意', url: BASE_URL + 'mandarin_china/8.saludo_final_zh.mp3' }
+            ],
+            Čeština: [
+                { id: 1, title: '1. VÍTEJTE | VEČEŘE NA NOČNÍ PLAVBĚ', url: BASE_URL + 'czech/1.bienvenidos_cena_crucero_nocturna_cs.mp3' },
+                { id: 2, title: '2. ŘEKA CHAO PHRAYA', url: BASE_URL + 'czech/2.rio_chao_phraya_cs.mp3' },
+                { id: 3, title: '3. WAT ARUN | CHRÁM ÚSVITU', url: BASE_URL + 'czech/3.wat_arun_templo_del_amanecer_cs.mp3' },
+                { id: 4, title: '4. VELKÝ KRÁLOVSKÝ PALÁC A WAT PHRA KAEW | CHRÁM SMARAGDOVÉHO BUDDHY', url: BASE_URL + 'czech/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_cs.mp3' },
+                { id: 5, title: '5. MOST RAMA VIII', url: BASE_URL + 'czech/5.puente_rama_viii_cs.mp3' },
+                { id: 6, title: '6. PANORAMATICKÉ VÝHLEDY NA ŘÍČNÍ BŘEHY', url: BASE_URL + 'czech/6.vistas_panoramicas_rivera_cs.mp3' },
+                { id: 7, title: '7. MEZINÁRODNÍ A THAJSKÝ BUFET', url: BASE_URL + 'czech/7.buffet_internacional_y_tailandes_cs.mp3' },
+                { id: 8, title: '8. ZÁVĚREČNÝ POZDRAV', url: BASE_URL + 'czech/8.saludo_final_cs.mp3' }
+            ],
+            日本語: [
+                { id: 1, title: '1. ようこそ | ナイトクルーズ ディナー', url: BASE_URL + 'japanese/1.bienvenidos_cena_crucero_nocturna_ja.mp3' },
+                { id: 2, title: '2. チャオプラヤー川', url: BASE_URL + 'japanese/2.rio_chao_phraya_ja.mp3' },
+                { id: 3, title: '3. ワット・アルン | 暁の寺', url: BASE_URL + 'japanese/3.wat_arun_templo_del_amanecer_ja.mp3' },
+                { id: 4, title: '4. 王宮とワット・プラケオ | エメラルド仏寺院', url: BASE_URL + 'japanese/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_ja.mp3' },
+                { id: 5, title: '5. ラマ8世橋', url: BASE_URL + 'japanese/5.puente_rama_viii_ja.mp3' },
+                { id: 6, title: '6. 川沿いのパノラマ景観', url: BASE_URL + 'japanese/6.vistas_panoramicas_rivera_ja.mp3' },
+                { id: 7, title: '7. インターナショナル＆タイ料理ビュッフェ', url: BASE_URL + 'japanese/7.buffet_internacional_y_tailandes_ja.mp3' },
+                { id: 8, title: '8. お別れの挨拶', url: BASE_URL + 'japanese/8.saludo_final_ja.mp3' }
+            ],
+            한국어: [
+                { id: 1, title: '1. 환영합니다 | 야간 크루즈 디너', url: BASE_URL + 'korean/1.bienvenidos_cena_crucero_nocturna_ko.mp3' },
+                { id: 2, title: '2. 차오프라야 강', url: BASE_URL + 'korean/2.rio_chao_phraya_ko.mp3' },
+                { id: 3, title: '3. 왓 아룬 | 새벽 사원', url: BASE_URL + 'korean/3.wat_arun_templo_del_amanecer_ko.mp3' },
+                { id: 4, title: '4. 왕궁과 왓 프라깨우 | 에메랄드 부처 사원', url: BASE_URL + 'korean/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_ko.mp3' },
+                { id: 5, title: '5. 라마 8세 다리', url: BASE_URL + 'korean/5.puente_rama_viii_ko.mp3' },
+                { id: 6, title: '6. 강변 파노라마 전망', url: BASE_URL + 'korean/6.vistas_panoramicas_rivera_ko.mp3' },
+                { id: 7, title: '7. 인터내셔널 및 태국식 뷔페', url: BASE_URL + 'korean/7.buffet_internacional_y_tailandes_ko.mp3' },
+                { id: 8, title: '8. 작별 인사', url: BASE_URL + 'korean/8.saludo_final_ko.mp3' }
+            ],
+            Bahasa_Melayu: [
+                { id: 1, title: '1. SELAMAT DATANG | MAKAN MALAM PELAYARAN MALAM', url: BASE_URL + 'malay/1.bienvenidos_cena_crucero_nocturna_ms.mp3' },
+                { id: 2, title: '2. SUNGAI CHAO PHRAYA', url: BASE_URL + 'malay/2.rio_chao_phraya_ms.mp3' },
+                { id: 3, title: '3. WAT ARUN | KUIL FAJAR', url: BASE_URL + 'malay/3.wat_arun_templo_del_amanecer_ms.mp3' },
+                { id: 4, title: '4. ISTANA DIRAJA AGUNG DAN WAT PHRA KAEW | KUIL BUDDHA EMERALD', url: BASE_URL + 'malay/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_ms.mp3' },
+                { id: 5, title: '5. JAMBATAN RAMA VIII', url: BASE_URL + 'malay/5.puente_rama_viii_ms.mp3' },
+                { id: 6, title: '6. PEMANDANGAN PANORAMA TEPI SUNGAI', url: BASE_URL + 'malay/6.vistas_panoramicas_rivera_ms.mp3' },
+                { id: 7, title: '7. BUFET ANTARABANGSA DAN THAI', url: BASE_URL + 'malay/7.buffet_internacional_y_tailandes_ms.mp3' },
+                { id: 8, title: '8. UCAPAN PERPISAHAN', url: BASE_URL + 'malay/8.saludo_final_ms.mp3' }
+            ],
+            Dansk: [
+                { id: 1, title: '1. VELKOMMEN | AFTENSMAD PÅ NATKRYDSTOGT', url: BASE_URL + 'danish/1.bienvenidos_cena_crucero_nocturna_da.mp3' },
+                { id: 2, title: '2. CHAO PHRAYA-FLODEN', url: BASE_URL + 'danish/2.rio_chao_phraya_da.mp3' },
+                { id: 3, title: '3. WAT ARUN | DAGGRYETS TEMPEL', url: BASE_URL + 'danish/3.wat_arun_templo_del_amanecer_da.mp3' },
+                { id: 4, title: '4. DET STORE KONGEPALADS OG WAT PHRA KAEW | SMARAGDBUDDHAENS TEMPEL', url: BASE_URL + 'danish/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_da.mp3' },
+                { id: 5, title: '5. RAMA VIII-BROEN', url: BASE_URL + 'danish/5.puente_rama_viii_da.mp3' },
+                { id: 6, title: '6. PANORAMISKE UDSIGTER OVER FLUDBREDEN', url: BASE_URL + 'danish/6.vistas_panoramicas_rivera_da.mp3' },
+                { id: 7, title: '7. INTERNATIONAL OG THAILANDSK BUFFET', url: BASE_URL + 'danish/7.buffet_internacional_y_tailandes_da.mp3' },
+                { id: 8, title: '8. AFSLUTTENDE HILSEN', url: BASE_URL + 'danish/8.saludo_final_da.mp3' }
+            ],
+            English: [
+                { id: 1, title: '1. WELCOME | NIGHT CRUISE DINNER', url: BASE_URL + 'english/1.bienvenidos_cena_crucero_nocturna_en.mp3' },
+                { id: 2, title: '2. CHAO PHRAYA RIVER', url: BASE_URL + 'english/2.rio_chao_phraya_en.mp3' },
+                { id: 3, title: '3. WAT ARUN | TEMPLE OF DAWN', url: BASE_URL + 'english/3.wat_arun_templo_del_amanecer_en.mp3' },
+                { id: 4, title: '4. THE GRAND ROYAL PALACE AND WAT PHRA KAEW | TEMPLE OF THE EMERALD BUDDHA', url: BASE_URL + 'english/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_en.mp3' },
+                { id: 5, title: '5. RAMA VIII BRIDGE', url: BASE_URL + 'english/5.puente_rama_viii_en.mp3' },
+                { id: 6, title: '6. PANORAMIC VIEWS OF THE RIVERBANK', url: BASE_URL + 'english/6.vistas_panoramicas_rivera_en.mp3' },
+                { id: 7, title: '7. INTERNATIONAL AND THAI BUFFET', url: BASE_URL + 'english/7.buffet_internacional_y_tailandes_en.mp3' },
+                { id: 8, title: '8. FAREWELL GREETING', url: BASE_URL + 'english/8.saludo_final_en.mp3' }
+            ],
+            नेपाली: [
+                { id: 1, title: '1. स्वागत छ | रात्री क्रुज डिनर', url: BASE_URL + 'nepali/1.bienvenidos_cena_crucero_nocturna_ne.mp3' },
+                { id: 2, title: '2. चाओ फ्राया नदी', url: BASE_URL + 'nepali/2.rio_chao_phraya_ne.mp3' },
+                { id: 3, title: '3. वाट अरुण | प्रभातको मन्दिर', url: BASE_URL + 'nepali/3.wat_arun_templo_del_amanecer_ne.mp3' },
+                { id: 4, title: '4. महान राजदरबार र वाट फ्रा काएव | पन्ना बुद्धको मन्दिर', url: BASE_URL + 'nepali/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_ne.mp3' },
+                { id: 5, title: '5. राम आठौं पुल', url: BASE_URL + 'nepali/5.puente_rama_viii_ne.mp3' },
+                { id: 6, title: '6. नदी किनाराका मनोरम दृश्यहरू', url: BASE_URL + 'nepali/6.vistas_panoramicas_rivera_ne.mp3' },
+                { id: 7, title: '7. अन्तर्राष्ट्रिय र थाई बुफे', url: BASE_URL + 'nepali/7.buffet_internacional_y_tailandes_ne.mp3' },
+                { id: 8, title: '8. बिदाइ अभिवादन', url: BASE_URL + 'nepali/8.saludo_final_ne.mp3' }
+            ],
+            Norsk: [
+                { id: 1, title: '1. VELKOMMEN | MIDDAG PÅ NATTCRUISE', url: BASE_URL + 'norwegian/1.bienvenidos_cena_crucero_nocturna_no.mp3' },
+                { id: 2, title: '2. CHAO PHRAYA-ELVEN', url: BASE_URL + 'norwegian/2.rio_chao_phraya_no.mp3' },
+                { id: 3, title: '3. WAT ARUN | DAGGRYETS TEMPEL', url: BASE_URL + 'norwegian/3.wat_arun_templo_del_amanecer_no.mp3' },
+                { id: 4, title: '4. DET STORE KONGEPALASSET OG WAT PHRA KAEW | SMARAGDBUDDHAENS TEMPEL', url: BASE_URL + 'norwegian/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_no.mp3' },
+                { id: 5, title: '5. RAMA VIII-BROEN', url: BASE_URL + 'norwegian/5.puente_rama_viii_no.mp3' },
+                { id: 6, title: '6. PANORAMAVISNINGER AV ELVEBREDDEN', url: BASE_URL + 'norwegian/6.vistas_panoramicas_rivera_no.mp3' },
+                { id: 7, title: '7. INTERNASJONAL OG THAILANDSK BUFFET', url: BASE_URL + 'norwegian/7.buffet_internacional_y_tailandes_no.mp3' },
+                { id: 8, title: '8. AVSKJEDSHILSEN', url: BASE_URL + 'norwegian/8.saludo_final_no.mp3' }
+            ],
+            فارسی: [
+                { id: 1, title: '1. خوش آمدید | شام کروز شبانه', url: BASE_URL + 'persian/1.bienvenidos_cena_crucero_nocturna_fa.mp3' },
+                { id: 2, title: '2. رودخانه چائو فرایا', url: BASE_URL + 'persian/2.rio_chao_phraya_fa.mp3' },
+                { id: 3, title: '3. وات آرون | معبد سپیده‌دم', url: BASE_URL + 'persian/3.wat_arun_templo_del_amanecer_fa.mp3' },
+                { id: 4, title: '4. کاخ بزرگ سلطنتی و وات فرا کائو | معبد بودای زمردین', url: BASE_URL + 'persian/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_fa.mp3' },
+                { id: 5, title: '5. پل راما هشتم', url: BASE_URL + 'persian/5.puente_rama_viii_fa.mp3' },
+                { id: 6, title: '6. مناظر پانورامای ساحل رودخانه', url: BASE_URL + 'persian/6.vistas_panoramicas_rivera_fa.mp3' },
+                { id: 7, title: '7. بوفه بین‌المللی و تایلندی', url: BASE_URL + 'persian/7.buffet_internacional_y_tailandes_fa.mp3' },
+                { id: 8, title: '8. پیام خداحافظی', url: BASE_URL + 'persian/8.saludo_final_fa.mp3' }
+            ],
+            Español_España: [
+                { id: 1, title: '1. BIENVENIDOS | CENA CRUCERO NOCTURNA', url: BASE_URL + 'spanish_spain/1.bienvenidos_cena_crucero_nocturna_es.mp3' },
+                { id: 2, title: '2. RÍO CHAO PHRAYA', url: BASE_URL + 'spanish_spain/2.rio_chao_phraya_es.mp3' },
+                { id: 3, title: '3. WAT ARUN | TEMPLO DEL AMANECER', url: BASE_URL + 'spanish_spain/3.wat_arun_templo_del_amanecer_es.mp3' },
+                { id: 4, title: '4. EL GRAN PALACIO REAL Y WAT PHRA KAEW | TEMPLO DEL BUDA ESMERALDA', url: BASE_URL + 'spanish_spain/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_es.mp3' },
+                { id: 5, title: '5. PUENTE RAMA VIII', url: BASE_URL + 'spanish_spain/5.puente_rama_viii_es.mp3' },
+                { id: 6, title: '6. VISTAS PANORÁMICAS DE LA RIBERA', url: BASE_URL + 'spanish_spain/6.vistas_panoramicas_rivera_es.mp3' },
+                { id: 7, title: '7. BUFÉ INTERNACIONAL Y TAILANDÉS', url: BASE_URL + 'spanish_spain/7.buffet_internacional_y_tailandes_es.mp3' },
+                { id: 8, title: '8. SALUDO FINAL', url: BASE_URL + 'spanish_spain/8.saludo_final_es.mp3' }
+            ],
+            Español_Latinoamérica: [
+                { id: 1, title: '1. BIENVENIDOS | CENA CRUCERO NOCTURNA', url: BASE_URL + 'spanish_latam/1.bienvenidos_cena_crucero_nocturna_es.mp3' },
+                { id: 2, title: '2. RÍO CHAO PHRAYA', url: BASE_URL + 'spanish_latam/2.rio_chao_phraya_es.mp3' },
+                { id: 3, title: '3. WAT ARUN | TEMPLO DEL AMANECER', url: BASE_URL + 'spanish_latam/3.wat_arun_templo_del_amanecer_es.mp3' },
+                { id: 4, title: '4. EL GRAN PALACIO REAL Y WAT PHRA KAEW | TEMPLO DEL BUDA ESMERALDA', url: BASE_URL + 'spanish_latam/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_es.mp3' },
+                { id: 5, title: '5. PUENTE RAMA VIII', url: BASE_URL + 'spanish_latam/5.puente_rama_viii_es.mp3' },
+                { id: 6, title: '6. VISTAS PANORÁMICAS DE LA RIBERA', url: BASE_URL + 'spanish_latam/6.vistas_panoramicas_rivera_es.mp3' },
+                { id: 7, title: '7. BUFÉ INTERNACIONAL Y TAILANDÉS', url: BASE_URL + 'spanish_latam/7.buffet_internacional_y_tailandes_es.mp3' },
+                { id: 8, title: '8. SALUDO FINAL', url: BASE_URL + 'spanish_latam/8.saludo_final_es.mp3' }
+            ],
+            繁體中_台灣: [
+                { id: 1, title: '1. 歡迎 | 夜間遊船晚宴', url: BASE_URL + 'mandarin_taiwan/1.bienvenidos_cena_crucero_nocturna_zh_tw.mp3' },
+                { id: 2, title: '2. 昭披耶河', url: BASE_URL + 'mandarin_taiwan/2.rio_chao_phraya_zh_tw.mp3' },
+                { id: 3, title: '3. 鄭王廟 | 黎明寺', url: BASE_URL + 'mandarin_taiwan/3.wat_arun_templo_del_amanecer_zh_tw.mp3' },
+                { id: 4, title: '4. 大皇宮與玉佛寺 | 翡翠佛寺', url: BASE_URL + 'mandarin_taiwan/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_zh_tw.mp3' },
+                { id: 5, title: '5. 拉瑪八世大橋', url: BASE_URL + 'mandarin_taiwan/5.puente_rama_viii_zh_tw.mp3' },
+                { id: 6, title: '6. 河岸全景美景', url: BASE_URL + 'mandarin_taiwan/6.vistas_panoramicas_rivera_zh_tw.mp3' },
+                { id: 7, title: '7. 國際與泰式自助餐', url: BASE_URL + 'mandarin_taiwan/7.buffet_internacional_y_tailandes_zh_tw.mp3' },
+                { id: 8, title: '8. 告別致意', url: BASE_URL + 'mandarin_taiwan/8.saludo_final_zh_tw.mp3' }
+            ],
+            ខ្មែរ: [
+                { id: 1, title: '1. សូមស្វាគមន៍ | អាហារពេលល្ងាចលើនាវាកម្សាន្តពេលយប់', url: BASE_URL + 'khmer/1.bienvenidos_cena_crucero_nocturna_km.mp3' },
+                { id: 2, title: '2. ទន្លេចៅផ្រាយ៉ា', url: BASE_URL + 'khmer/2.rio_chao_phraya_km.mp3' },
+                { id: 3, title: '3. វត្តអរុណ | វត្តព្រឹកព្រលឹម', url: BASE_URL + 'khmer/3.wat_arun_templo_del_amanecer_km.mp3' },
+                { id: 4, title: '4. ព្រះបរមរាជវាំង និង វត្តព្រះកែវ | វត្តព្រះពុទ្ធត្បូងមរកត', url: BASE_URL + 'khmer/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_km.mp3' },
+                { id: 5, title: '5. ស្ពានរាមាទី៨', url: BASE_URL + 'khmer/5.puente_rama_viii_km.mp3' },
+                { id: 6, title: '6. ទិដ្ឋភាពទូលំទូលាយតាមមាត់ទន្លេ', url: BASE_URL + 'khmer/6.vistas_panoramicas_rivera_km.mp3' },
+                { id: 7, title: '7. អាហារប៊ូហ្វេអន្តរជាតិ និង ថៃ', url: BASE_URL + 'khmer/7.buffet_internacional_y_tailandes_km.mp3' },
+                { id: 8, title: '8. ពាក្យលាឈប់', url: BASE_URL + 'khmer/8.saludo_final_km.mp3' }
+            ],
+            Català: [
+                { id: 1, title: '1. BENVINGUTS | SOPAR CREUER NOCTURN', url: BASE_URL + 'catalan/1.bienvenidos_cena_crucero_nocturna_ca.mp3' },
+                { id: 2, title: '2. RIU CHAO PHRAYA', url: BASE_URL + 'catalan/2.rio_chao_phraya_ca.mp3' },
+                { id: 3, title: '3. WAT ARUN | TEMPLE DE L’ALBA', url: BASE_URL + 'catalan/3.wat_arun_templo_del_amanecer_ca.mp3' },
+                { id: 4, title: '4. EL GRAN PALAU REIAL I WAT PHRA KAEW | TEMPLE DEL BUDA MARAGDA', url: BASE_URL + 'catalan/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_ca.mp3' },
+                { id: 5, title: '5. PONT RAMA VIII', url: BASE_URL + 'catalan/5.puente_rama_viii_ca.mp3' },
+                { id: 6, title: '6. VISTES PANORÀMIQUES DE LA RIBA', url: BASE_URL + 'catalan/6.vistas_panoramicas_rivera_ca.mp3' },
+                { id: 7, title: '7. BUFET INTERNACIONAL I TAILANDÈS', url: BASE_URL + 'catalan/7.buffet_internacional_y_tailandes_ca.mp3' },
+                { id: 8, title: '8. SALUTACIÓ FINAL', url: BASE_URL + 'catalan/8.saludo_final_ca.mp3' }
+            ],
+            Polski: [
+                { id: 1, title: '1. WITAMY | KOLACJA NA NOCNYM REJSIE', url: BASE_URL + 'polish/1.bienvenidos_cena_crucero_nocturna_pl.mp3' },
+                { id: 2, title: '2. RZEKA CHAO PHRAYA', url: BASE_URL + 'polish/2.rio_chao_phraya_pl.mp3' },
+                { id: 3, title: '3. WAT ARUN | ŚWIĄTYNIA ŚWITU', url: BASE_URL + 'polish/3.wat_arun_templo_del_amanecer_pl.mp3' },
+                { id: 4, title: '4. WIELKI PAŁAC KRÓLEWSKI I WAT PHRA KAEW | ŚWIĄTYNIA SZMARAGDOWEGO BUDDY', url: BASE_URL + 'polish/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_pl.mp3' },
+                { id: 5, title: '5. MOST RAMA VIII', url: BASE_URL + 'polish/5.puente_rama_viii_pl.mp3' },
+                { id: 6, title: '6. PANORAMICZNE WIDOKI NAD RZEKĄ', url: BASE_URL + 'polish/6.vistas_panoramicas_rivera_pl.mp3' },
+                { id: 7, title: '7. MIĘDZYNARODOWY I TAJSKI BUFET', url: BASE_URL + 'polish/7.buffet_internacional_y_tailandes_pl.mp3' },
+                { id: 8, title: '8. POŻEGNALNE POZDROWIENIE', url: BASE_URL + 'polish/8.saludo_final_pl.mp3' }
+            ],
+            Português: [
+                { id: 1, title: '1. BEM-VINDOS | JANTAR EM CRUZEIRO NOTURNO', url: BASE_URL + 'portuguese/1.bienvenidos_cena_crucero_nocturna_pt.mp3' },
+                { id: 2, title: '2. RIO CHAO PHRAYA', url: BASE_URL + 'portuguese/2.rio_chao_phraya_pt.mp3' },
+                { id: 3, title: '3. WAT ARUN | TEMPLO DO AMANHECER', url: BASE_URL + 'portuguese/3.wat_arun_templo_del_amanecer_pt.mp3' },
+                { id: 4, title: '4. O GRANDE PALÁCIO REAL E WAT PHRA KAEW | TEMPLO DO BUDA DE ESMERALDA', url: BASE_URL + 'portuguese/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_pt.mp3' },
+                { id: 5, title: '5. PONTE RAMA VIII', url: BASE_URL + 'portuguese/5.puente_rama_viii_pt.mp3' },
+                { id: 6, title: '6. VISTAS PANORÂMICAS DA MARGEM DO RIO', url: BASE_URL + 'portuguese/6.vistas_panoramicas_rivera_pt.mp3' },
+                { id: 7, title: '7. BUFÊ INTERNACIONAL E TAILANDÊS', url: BASE_URL + 'portuguese/7.buffet_internacional_y_tailandes_pt.mp3' },
+                { id: 8, title: '8. SAUDAÇÃO FINAL', url: BASE_URL + 'portuguese/8.saludo_final_pt.mp3' }
+            ],
+            Hrvatski: [
+                { id: 1, title: '1. DOBRODOŠLI | VEČERA NA NOĆNOM KRSTARENJU', url: BASE_URL + 'croatian/1.bienvenidos_cena_crucero_nocturna_hr.mp3' },
+                { id: 2, title: '2. RIJEKA CHAO PHRAYA', url: BASE_URL + 'croatian/2.rio_chao_phraya_hr.mp3' },
+                { id: 3, title: '3. WAT ARUN | HRAM ZORE', url: BASE_URL + 'croatian/3.wat_arun_templo_del_amanecer_hr.mp3' },
+                { id: 4, title: '4. VELIKA KRALJEVSKA PALAČA I WAT PHRA KAEW | HRAM SMARAGDNOG BUDE', url: BASE_URL + 'croatian/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_hr.mp3' },
+                { id: 5, title: '5. MOST RAMA VIII', url: BASE_URL + 'croatian/5.puente_rama_viii_hr.mp3' },
+                { id: 6, title: '6. PANORAMSKI POGLEDI NA RIJEČNU OBALU', url: BASE_URL + 'croatian/6.vistas_panoramicas_rivera_hr.mp3' },
+                { id: 7, title: '7. MEĐUNARODNI I TAJLANDSKI BUFET', url: BASE_URL + 'croatian/7.buffet_internacional_y_tailandes_hr.mp3' },
+                { id: 8, title: '8. ZAVRŠNI POZDRAV', url: BASE_URL + 'croatian/8.saludo_final_hr.mp3' }
+            ],
+            Nederlands: [
+                { id: 1, title: '1. WELKOM | DINER OP EEN AVONDCRUISE', url: BASE_URL + 'dutch/1.bienvenidos_cena_crucero_nocturna_nl.mp3' },
+                { id: 2, title: '2. DE CHAO PHRAYA-RIVIER', url: BASE_URL + 'dutch/2.rio_chao_phraya_nl.mp3' },
+                { id: 3, title: '3. WAT ARUN | TEMPEL VAN DE DAGERAAD', url: BASE_URL + 'dutch/3.wat_arun_templo_del_amanecer_nl.mp3' },
+                { id: 4, title: '4. HET GROTE KONINKLIJKE PALEIS EN WAT PHRA KAEW | TEMPEL VAN DE SMARAGDEN BOEDDHA', url: BASE_URL + 'dutch/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_nl.mp3' },
+                { id: 5, title: '5. RAMA VIII-BRUG', url: BASE_URL + 'dutch/5.puente_rama_viii_nl.mp3' },
+                { id: 6, title: '6. PANORAMISCHE UITZICHTEN OP DE RIVIEROEVER', url: BASE_URL + 'dutch/6.vistas_panoramicas_rivera_nl.mp3' },
+                { id: 7, title: '7. INTERNATIONAAL EN THAIS BUFFET', url: BASE_URL + 'dutch/7.buffet_internacional_y_tailandes_nl.mp3' },
+                { id: 8, title: '8. AFSCHEIDSGROET', url: BASE_URL + 'dutch/8.saludo_final_nl.mp3' }
+            ],
+            Русский: [
+                { id: 1, title: '1. ДОБРО ПОЖАЛОВАТЬ | УЖИН НА ВЕЧЕРНЕМ КРУИЗЕ', url: BASE_URL + 'russian/1.bienvenidos_cena_crucero_nocturna_ru.mp3' },
+                { id: 2, title: '2. РЕКА ЧАО ПРАЙЯ', url: BASE_URL + 'russian/2.rio_chao_phraya_ru.mp3' },
+                { id: 3, title: '3. ВАТ АРУН | ХРАМ РАССВЕТА', url: BASE_URL + 'russian/3.wat_arun_templo_del_amanecer_ru.mp3' },
+                { id: 4, title: '4. БОЛЬШОЙ КОРОЛЕВСКИЙ ДВОРЕЦ И ВАТ ПХРА КЕО | ХРАМ ИЗУМРУДНОГО БУДДЫ', url: BASE_URL + 'russian/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_ru.mp3' },
+                { id: 5, title: '5. МОСТ РАМА VIII', url: BASE_URL + 'russian/5.puente_rama_viii_ru.mp3' },
+                { id: 6, title: '6. ПАНОРАМНЫЕ ВИДЫ НА РЕЧНУЮ НАБЕРЕЖНУЮ', url: BASE_URL + 'russian/6.vistas_panoramicas_rivera_ru.mp3' },
+                { id: 7, title: '7. МЕЖДУНАРОДНЫЙ И ТАЙСКИЙ БУФЕТ', url: BASE_URL + 'russian/7.buffet_internacional_y_tailandes_ru.mp3' },
+                { id: 8, title: '8. ПРОЩАЛЬНОЕ ПРИВЕТСТВИЕ', url: BASE_URL + 'russian/8.saludo_final_ru.mp3' }
+            ],
+            Српски: [
+                { id: 1, title: '1. ДОБРО ДОШЛИ | ВЕЧЕРА НА НОЋНОМ КРУЗЕРУ', url: BASE_URL + 'serbian/1.bienvenidos_cena_crucero_nocturna_sr.mp3' },
+                { id: 2, title: '2. РЕКА ЧАО ФРАЈА', url: BASE_URL + 'serbian/2.rio_chao_phraya_sr.mp3' },
+                { id: 3, title: '3. ВАТ АРУН | ХРАМ ЗОРЕ', url: BASE_URL + 'serbian/3.wat_arun_templo_del_amanecer_sr.mp3' },
+                { id: 4, title: '4. ВЕЛИКА КРАЉЕВСКА ПАЛАТА И ВАТ ФРА КЕО | ХРАМ СМАРАГДНОГ БУДЕ', url: BASE_URL + 'serbian/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_sr.mp3' },
+                { id: 5, title: '5. МОСТ РАМА VIII', url: BASE_URL + 'serbian/5.puente_rama_viii_sr.mp3' },
+                { id: 6, title: '6. ПАНОРАМСКИ ПОГЛЕДИ НА РЕЧНУ ОБАЛУ', url: BASE_URL + 'serbian/6.vistas_panoramicas_rivera_sr.mp3' },
+                { id: 7, title: '7. МЕЂУНАРОДНИ И ТАЈЛАНДСКИ БУФЕТ', url: BASE_URL + 'serbian/7.buffet_internacional_y_tailandes_sr.mp3' },
+                { id: 8, title: '8. ЗАВРШНИ ПОЗДРАВ', url: BASE_URL + 'serbian/8.saludo_final_sr.mp3' }
+            ],
+            Filipino: [
+                { id: 1, title: '1. MALIGAYANG PAGDATING | HAPUNAN SA GABING CRUISE', url: BASE_URL + 'filipino/1.bienvenidos_cena_crucero_nocturna_fil.mp3' },
+                { id: 2, title: '2. ILOG CHAO PHRAYA', url: BASE_URL + 'filipino/2.rio_chao_phraya_fil.mp3' },
+                { id: 3, title: '3. WAT ARUN | TEMPLO NG BUHANGIN NG ARAW', url: BASE_URL + 'filipino/3.wat_arun_templo_del_amanecer_fil.mp3' },
+                { id: 4, title: '4. DAKILANG PALASYONG HARI AT WAT PHRA KAEW | TEMPLO NG ESMERALDANG BUDA', url: BASE_URL + 'filipino/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_fil.mp3' },
+                { id: 5, title: '5. TULAY RAMA VIII', url: BASE_URL + 'filipino/5.puente_rama_viii_fil.mp3' },
+                { id: 6, title: '6. MALALAWAK NA TANAWIN SA TABING-ILOG', url: BASE_URL + 'filipino/6.vistas_panoramicas_rivera_fil.mp3' },
+                { id: 7, title: '7. INTERNASYONAL AT THAI NA BUFFET', url: BASE_URL + 'filipino/7.buffet_internacional_y_tailandes_fil.mp3' },
+                { id: 8, title: '8. HULING PAGBATI', url: BASE_URL + 'filipino/8.saludo_final_fil.mp3' }
+            ],
+            Slovenščina: [
+                { id: 1, title: '1. DOBRODOŠLI | VEČERJA NA NOČNI KRIŽARJENJU', url: BASE_URL + 'slovenian/1.bienvenidos_cena_crucero_nocturna_sl.mp3' },
+                { id: 2, title: '2. REKA CHAO PHRAYA', url: BASE_URL + 'slovenian/2.rio_chao_phraya_sl.mp3' },
+                { id: 3, title: '3. WAT ARUN | TEMPEL ZORE', url: BASE_URL + 'slovenian/3.wat_arun_templo_del_amanecer_sl.mp3' },
+                { id: 4, title: '4. VELIKA KRALJEVA PALAČA IN WAT PHRA KAEW | TEMPEL SMARAGDNEGA BUDE', url: BASE_URL + 'slovenian/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_sl.mp3' },
+                { id: 5, title: '5. MOST RAMA VIII', url: BASE_URL + 'slovenian/5.puente_rama_viii_sl.mp3' },
+                { id: 6, title: '6. PANORAMSKI RAZGLEDI NA REČNO NABREŽJE', url: BASE_URL + 'slovenian/6.vistas_panoramicas_rivera_sl.mp3' },
+                { id: 7, title: '7. MEDNARODNI IN TAJSKI BIFE', url: BASE_URL + 'slovenian/7.buffet_internacional_y_tailandes_sl.mp3' },
+                { id: 8, title: '8. ZAKLJUČNI POZDRAV', url: BASE_URL + 'slovenian/8.saludo_final_sl.mp3' }
+            ],
+            Kiswahili: [
+                { id: 1, title: '1. KARIBU | CHAKULA CHA JIONI KWENYE CRUISE YA USIKU', url: BASE_URL + 'swahili/1.bienvenidos_cena_crucero_nocturna_sw.mp3' },
+                { id: 2, title: '2. MTO CHAO PHRAYA', url: BASE_URL + 'swahili/2.rio_chao_phraya_sw.mp3' },
+                { id: 3, title: '3. WAT ARUN | HEKALU YA MAPAMBANO YA JUA', url: BASE_URL + 'swahili/3.wat_arun_templo_del_amanecer_sw.mp3' },
+                { id: 4, title: '4. IKULU KUU YA KIFALME NA WAT PHRA KAEW | HEKALU YA BUDA WA ZAMARADI', url: BASE_URL + 'swahili/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_sw.mp3' },
+                { id: 5, title: '5. DARAJA LA RAMA VIII', url: BASE_URL + 'swahili/5.puente_rama_viii_sw.mp3' },
+                { id: 6, title: '6. MANDHARI YA PANORAMA YA KINGO ZA MTO', url: BASE_URL + 'swahili/6.vistas_panoramicas_rivera_sw.mp3' },
+                { id: 7, title: '7. BUFFET YA KIMATAIFA NA KITHAI', url: BASE_URL + 'swahili/7.buffet_internacional_y_tailandes_sw.mp3' },
+                { id: 8, title: '8. SALAMU YA MWISHO', url: BASE_URL + 'swahili/8.saludo_final_sw.mp3' }
+            ],
+            Svenska: [
+                { id: 1, title: '1. VÄLKOMMEN | MIDDAG PÅ EN KVÄLLSKRYSSNING', url: BASE_URL + 'swedish/1.bienvenidos_cena_crucero_nocturna_sv.mp3' },
+                { id: 2, title: '2. CHAO PHRAYA-FLODEN', url: BASE_URL + 'swedish/2.rio_chao_phraya_sv.mp3' },
+                { id: 3, title: '3. WAT ARUN | GRYNINGENS TEMPEL', url: BASE_URL + 'swedish/3.wat_arun_templo_del_amanecer_sv.mp3' },
+                { id: 4, title: '4. DET STORA KUNGLIGA PALATSET OCH WAT PHRA KAEW | TEMPLET FÖR SMARAGDBUDDHAN', url: BASE_URL + 'swedish/4.gran_palacio_real_y_wat_phra_kaew_buda_esmeralda_sv.mp3' },
+                { id: 5, title: '5. RAMA VIII-BRON', url: BASE_URL + 'swedish/5.puente_rama_viii_sv.mp3' },
+                { id: 6, title: '6. PANORAMAVYER ÖVER FLODSTRANDEN', url: BASE_URL + 'swedish/6.vistas_panoramicas_rivera_sv.mp3' },
+                { id: 7, title: '7. INTERNATIONELL OCH THAILÄNDSK BUFFÉ', url: BASE_URL + 'swedish/7.buffet_internacional_y_tailandes_sv.mp3' },
+                { id: 8, title: '8. AVSLUTANDE HÄLSNING', url: BASE_URL + 'swedish/8.saludo_final_sv.mp3' }
+            ],
+        };
+
+
+        // Variables globales
+        let currentLanguage = '';
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+
+
+        const audio = document.getElementById('audioPlayer');
+        const playIcon = document.getElementById('playIcon');
+
+
+        // Inicializar
+        function init() {
+            populateLanguages();
+            setupEventListeners();
+
+        }
+
+        // Poblar idiomas
+        function populateLanguages() {
+            const dropdown = document.getElementById('languageDropdown');
+            dropdown.innerHTML = '';
+            
+            Object.keys(audioDatabase).forEach(lang => {
+                const button = document.createElement('button');
+                button.className = 'language-option';
+                button.textContent = lang.charAt(0).toUpperCase() + lang.slice(1);
+                button.onclick = () => selectLanguage(lang);
+                dropdown.appendChild(button);
+            });
+        }
+
+        // Seleccionar idioma
+        function selectLanguage(lang) {
+            currentLanguage = lang;
+            currentTrackIndex = 0;
+            isPlaying = false;
+            
+            document.getElementById('selectedLanguage').textContent = 
+                lang.charAt(0).toUpperCase() + lang.slice(1);
+            
+            toggleLanguageDropdown();
+            loadPlaylist();
+            showPlayer();
+            loadTrack(0);
+        }
+
+        // Mostrar/ocultar dropdown
+        function toggleLanguageDropdown() {
+            const dropdown = document.getElementById('languageDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Cargar lista de reproducción
+        function loadPlaylist() {
+            const playlistItems = document.getElementById('playlistItems');
+            playlistItems.innerHTML = '';
+            
+            const tracks = audioDatabase[currentLanguage];
+            tracks.forEach((track, index) => {
+                const button = document.createElement('button');
+                button.className = 'playlist-item';
+                if (index === currentTrackIndex) button.classList.add('active');
+                
+                button.innerHTML = `
+                    <div class="playlist-icon">
+                        <svg class="icon-small" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="${isPlaying && index === currentTrackIndex ? 'M6 19h4V5H6v14zm8-14v14h4V5h-4z' : 'M8 5v14l11-7z'}"/>
+                        </svg>
+                    </div>
+                    <div class="playlist-title">${track.title}</div>
+                `;
+                
+                button.onclick = () => selectTrack(index);
+                playlistItems.appendChild(button);
+            });
+        }
+
+        // Mostrar reproductor
+        function showPlayer() {
+            document.getElementById('player').classList.add('show');
+            document.getElementById('playlist').classList.add('show');
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        // Cargar pista
+        function loadTrack(index) {
+            const tracks = audioDatabase[currentLanguage];
+            if (!tracks || !tracks[index]) return;
+            
+            currentTrackIndex = index;
+            const track = tracks[index];
+            
+            audio.src = track.url;
+            document.getElementById('trackTitle').textContent = track.title;
+            document.getElementById('trackLanguage').textContent = 
+                currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
+            
+            loadPlaylist();
+            
+            if (isPlaying) {
+                audio.play();
+            }
+        }
+
+        // Seleccionar pista
+        function selectTrack(index) {
+            loadTrack(index);
+            isPlaying = true;
+            audio.play();
+            updatePlayIcon();
+        }
+
+        // Toggle play/pause
+        function togglePlay() {
+            if (!currentLanguage) return;
+            
+            if (isPlaying) {
+                audio.pause();
+            } else {
+                audio.play();
+            }
+            
+            isPlaying = !isPlaying;
+            updatePlayIcon();
+            loadPlaylist();
+        }
+
+        // Pista anterior
+        function previousTrack() {
+            if (audio.currentTime > 3) {
+                audio.currentTime = 0;
+            } else if (currentTrackIndex > 0) {
+                loadTrack(currentTrackIndex - 1);
+                if (isPlaying) audio.play();
+            }
+        }
+
+        // Pista siguiente
+        function nextTrack() {
+            const tracks = audioDatabase[currentLanguage];
+            if (currentTrackIndex < tracks.length - 1) {
+                loadTrack(currentTrackIndex + 1);
+                if (isPlaying) audio.play();
+            } else {
+                loadTrack(0);
+                isPlaying = false;
+                updatePlayIcon();
+            }
+        }
+
+
+
+        // Actualizar icono de play
+        function updatePlayIcon() {
+            playIcon.innerHTML = isPlaying 
+                ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'
+                : '<path d="M8 5v14l11-7z"/>';
+        }
+
+
+
+        // Formatear tiempo
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Actualizar gradiente de barras
+        function updateProgressGradient(value, max) {
+            const percentage = (value / max) * 100;
+            const isDark = document.body.classList.contains('dark');
+            const bgColor = isDark ? '#374151' : '#e5e7eb';
+            return `linear-gradient(to right, #9f24e7 0%, #f200c4 ${percentage}%, ${bgColor} ${percentage}%, ${bgColor} 100%)`;
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            // Audio events
+            audio.addEventListener('timeupdate', () => {
+                const progressBar = document.getElementById('progressBar');
+                progressBar.max = audio.duration || 0;
+                progressBar.value = audio.currentTime;
+                progressBar.style.background = updateProgressGradient(audio.currentTime, audio.duration);
+                document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
+            });
+
+            audio.addEventListener('loadedmetadata', () => {
+                document.getElementById('duration').textContent = formatTime(audio.duration);
+            });
+
+            audio.addEventListener('ended', () => {
+                nextTrack();
+            });
+
+            // Progress bar
+            document.getElementById('progressBar').addEventListener('input', (e) => {
+                audio.currentTime = e.target.value;
+            });
+
+
+
+            // Cerrar dropdown al hacer clic fuera
+            document.addEventListener('click', (e) => {
+                const dropdown = document.getElementById('languageDropdown');
+                const button = document.querySelector('.language-button');
+                if (!dropdown.contains(e.target) && !button.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+
+
+        }
+
+        // Toggle tema
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            document.body.classList.toggle('light');
+            
+            const isDark = document.body.classList.contains('dark');
+            const icon = document.getElementById('themeIcon');
+            
+            if (isDark) {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
+            } else {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
+            }
+
+            // Actualizar gradientes
+            const progressBar = document.getElementById('progressBar');
+
+            progressBar.style.background = updateProgressGradient(audio.currentTime, audio.duration);
+
+        }
+
+        // Inicializar app
+        window.onload = init;
+    </script>
+</body>
+</html>

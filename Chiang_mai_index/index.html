@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Guide - Monkey Travel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            transition: background-color 0.3s;
+        }
+
+        body.dark {
+            background-color: #111827;
+        }
+
+        body.light {
+            background-color: #f9fafb;
+        }
+
+        .container {
+            max-width: 448px;
+            margin: 0 auto;
+            padding: 0; /* Remove padding from container to allow hero to span full width */
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            height: 200px; /* Adjust height as needed */
+            overflow: hidden;
+            border-bottom-left-radius: 1.5rem;
+            border-bottom-right-radius: 1.5rem;
+            background-image: url('chiang.webp'); /* Replace with your image */
+            background-color: #333; 
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+        }
+
+        .hero-content {
+            width: 100%;
+            padding: 1rem;
+            /* Dark overlay effect for better text readability */
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+            color: white; /* Default color for text over dark background */
+            padding: 0.25rem 0;
+            
+            /* Mimic the magenta/purple color from the mockup */
+            background: linear-gradient(to right, #9f24e7, #f200c4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5)); /* Subtle shadow for contrast */
+        }
+
+        /* Adjust padding for the rest of the content */
+        .language-selector, .player, .playlist, .empty-state {
+            padding: 1rem;
+        }
+
+        /* Header */
+
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem; /* Reduced margin to bring closer to language selector */
+            padding: 1rem; /* Add padding back to header content */
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(to bottom right, #9f24e7, #f200c4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+        }
+
+
+
+        .brand-info p {
+            font-size: 0.875rem; /* Slightly larger for better visibility next to logo */
+            transition: color 0.3s;
+        }
+
+
+
+        body.dark .brand-info p {
+            color: #9ca3af; /* Reverted to original color for better contrast */
+        }
+
+        body.light .brand-info p {
+            color: #6b7280;
+        }
+
+        .theme-toggle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        body.dark .theme-toggle {
+            background-color: #1f2937;
+            color: #fbbf24;
+        }
+
+        body.dark .theme-toggle:hover {
+            background-color: #374151;
+        }
+
+        body.light .theme-toggle {
+            background-color: white;
+            color: #9f24e7;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light .theme-toggle:hover {
+            background-color: #f3f4f6;
+        }
+
+	        /* Language Selector */
+	        .language-selector {
+	            position: relative;
+	            margin-bottom: 1rem;
+	            padding: 0 1rem; /* Add horizontal padding */
+	        }
+
+        .language-button {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 1rem;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        body.dark .language-button {
+            background-color: #1f2937;
+            color: white;
+        }
+
+        body.dark .language-button:hover {
+            background-color: #374151;
+        }
+
+        body.light .language-button {
+            background-color: white;
+            color: #111827;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light .language-button:hover {
+            background-color: #f9fafb;
+        }
+
+        .language-dropdown {
+            position: absolute;
+            width: 100%;
+            margin-top: 0.5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            z-index: 10;
+            display: none;
+        }
+
+        .language-dropdown.show {
+            display: block;
+        }
+
+        body.dark .language-dropdown {
+            background-color: #1f2937;
+        }
+
+        body.light .language-dropdown {
+            background-color: white;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .language-option {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        body.dark .language-option {
+            color: white;
+        }
+
+        body.dark .language-option:hover {
+            background-color: #374151;
+        }
+
+        body.light .language-option {
+            color: #111827;
+        }
+
+        body.light .language-option:hover {
+            background-color: #f3f4f6;
+        }
+
+        .language-option.active {
+            background: linear-gradient(to right, #9f24e7, #f200c4);
+            color: white;
+        }
+
+	        /* Player */
+	        .player {
+	            border-radius: 1.5rem;
+	            padding: 1.5rem;
+	            margin-bottom: 1rem;
+	            transition: all 0.3s;
+	            display: none;
+	            margin: 0 1rem 1rem 1rem; /* Add horizontal margin to respect container width */
+	        }
+
+        .player.show {
+            display: block;
+        }
+
+        body.dark .player {
+            background: linear-gradient(to bottom right, #1f2937, #111827);
+        }
+
+        body.light .player {
+            background: linear-gradient(to bottom right, white, #f9fafb);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        .album-art {
+            aspect-ratio: 1;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .album-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .album-content {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .album-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .track-info {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .track-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        body.dark .track-title {
+            color: white;
+        }
+
+        body.light .track-title {
+            color: #111827;
+        }
+
+        .track-language {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        body.dark .track-language {
+            color: #9ca3af;
+        }
+
+        body.light .track-language {
+            color: #6b7280;
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            appearance: none;
+            cursor: pointer;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-bar::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+        }
+
+        body.dark .time-display {
+            color: #9ca3af;
+        }
+
+        body.light .time-display {
+            color: #6b7280;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .control-btn {
+            padding: 0.75rem;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        body.dark .control-btn {
+            background-color: #374151;
+            color: white;
+        }
+
+        body.dark .control-btn:hover:not(:disabled) {
+            background-color: #4b5563;
+        }
+
+        body.light .control-btn {
+            background-color: #e5e7eb;
+            color: #111827;
+        }
+
+        body.light .control-btn:hover:not(:disabled) {
+            background-color: #d1d5db;
+        }
+
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .play-btn {
+            padding: 1.25rem;
+            background: linear-gradient(to right, #9f24e7, #f200c4);
+            color: white;
+            box-shadow: 0 10px 15px rgba(159, 36, 231, 0.3);
+        }
+
+        .play-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+
+        
+
+	        /* Playlist */
+	        .playlist {
+	            border-radius: 1.5rem;
+	            padding: 1rem;
+	            transition: all 0.3s;
+	            display: none;
+	            margin: 0 1rem 1rem 1rem; /* Add horizontal margin to respect container width */
+	        }
+
+        .playlist.show {
+            display: block;
+        }
+
+        body.dark .playlist {
+            background-color: #1f2937;
+        }
+
+        body.light .playlist {
+            background-color: white;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .playlist h3 {
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            padding: 0 0.5rem;
+        }
+
+        body.dark .playlist h3 {
+            color: white;
+        }
+
+        body.light .playlist h3 {
+            color: #111827;
+        }
+
+        .playlist-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .playlist-item {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-align: left;
+            transition: all 0.3s;
+        }
+
+        body.dark .playlist-item {
+            background-color: #374151;
+            color: white;
+        }
+
+        body.dark .playlist-item:hover {
+            background-color: #4b5563;
+        }
+
+        body.light .playlist-item {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+
+        body.light .playlist-item:hover {
+            background-color: #e5e7eb;
+        }
+
+        .playlist-item.active {
+            background: linear-gradient(to right, #9f24e7, #f200c4);
+            color: white;
+            box-shadow: 0 10px 15px rgba(159, 36, 231, 0.3);
+        }
+
+        .playlist-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .playlist-item.active .playlist-icon {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark .playlist-item:not(.active) .playlist-icon {
+            background-color: #4b5563;
+        }
+
+        body.light .playlist-item:not(.active) .playlist-icon {
+            background-color: #e5e7eb;
+        }
+
+        .playlist-title {
+            font-weight: 500;
+        }
+
+	        /* Empty State */
+	        .empty-state {
+	            border-radius: 1.5rem;
+	            padding: 3rem;
+	            text-align: center;
+	            transition: all 0.3s;
+	            margin: 0 1rem 1rem 1rem; /* Add horizontal margin to respect container width */
+	        }
+
+        body.dark .empty-state {
+            background-color: #1f2937;
+        }
+
+        body.light .empty-state {
+            background-color: white;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-text {
+            font-size: 1.125rem;
+        }
+
+        body.dark .empty-text {
+            color: #9ca3af;
+        }
+
+        body.light .empty-text {
+            color: #6b7280;
+        }
+
+        /* Icons */
+        .icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .icon-small {
+            width: 20px;
+            height: 20px;
+        }
+
+        .icon-large {
+            width: 32px;
+            height: 32px;
+        }
+    </style>
+</head>
+<body class="dark">
+	    <div class="container">
+	        <!-- Hero Section -->
+	        <div class="hero-section">
+	            <div class="hero-content">
+	                <h1 class="hero-title">Chiang Mai</h1>
+                    <h1 class="hero-title">Chiang Rai</h1>
+	            </div>
+	        </div>
+
+	        <!-- Header -->
+	        <div class="header">
+	            <div class="logo-section">
+	                <div class="logo">
+	                    <!-- Reemplaza con tu logo: <img src="logo_monkey.webp" alt="Logo"> -->
+	                    <img src="logo_monkey.webp" alt="Logo">
+	                </div>
+	                <div class="brand-info">
+	                    <p>Monkey Travel</p>
+	                </div>
+	            </div>
+	            <button class="theme-toggle" onclick="toggleTheme()">
+	                <svg class="icon" id="themeIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+	                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+	                </svg>
+	            </button>
+	        </div>
+
+	        <!-- Language Selector -->
+	        <div class="language-selector">
+            <button class="language-button" onclick="toggleLanguageDropdown()">
+                <span id="selectedLanguage">Seleccionar Idioma</span>
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            <div class="language-dropdown" id="languageDropdown"></div>
+        </div>
+
+        <!-- Player -->
+        <div class="player" id="player">
+            <div class="album-art" id="albumArt">
+                <!-- Reemplaza con tu portada: <img src="portada.jpg" alt="Portada"> -->
+                <img src="logo_monkey.webp" alt="Portada">
+            </div>
+
+            <div class="track-info">
+                <h2 class="track-title" id="trackTitle">Sin audio</h2>
+                <p class="track-language" id="trackLanguage"></p>
+            </div>
+
+            <div class="progress-section">
+                <input type="range" class="progress-bar" id="progressBar" min="0" max="100" value="0">
+                <div class="time-display">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="control-btn" onclick="previousTrack()" id="prevBtn">
+                    <svg class="icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                    </svg>
+                </button>
+                <button class="control-btn play-btn" onclick="togglePlay()" id="playBtn">
+                    <svg class="icon-large" id="playIcon" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+                <button class="control-btn" onclick="nextTrack()" id="nextBtn">
+                    <svg class="icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                    </svg>
+                </button>
+            </div>
+
+
+        </div>
+
+        <!-- Playlist -->
+        <div class="playlist" id="playlist">
+            <h3>Lista de Reproducción</h3>
+            <div class="playlist-items" id="playlistItems"></div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState">
+            <div class="empty-icon">🎧</div>
+            <p class="empty-text">Selecciona un idioma para comenzar a escuchar</p>
+        </div>
+
+        <audio id="audioPlayer"></audio>
+    </div>
+
+    <script>
+        // Base de datos de audios
+        const BASE_URL = "https://kevinsoler313askdiscovery-sudo.github.io/Chiang_Mai_Audios/audios/";
+
+        const audioDatabase = {
+            Deutsch: [
+                { id: 1, title: '1. EINLEITUNG – WILLKOMMEN', url: BASE_URL + 'german/1.introduccion_bienvenida_de.mp3' },
+                { id: 2, title: '2. ANKUNFT IN CHIANG MAI | TOR ZUM NORDEN', url: BASE_URL + 'german/2.llegada_chiang_mai_de.mp3' },
+                { id: 3, title: '3. KLIMA', url: BASE_URL + 'german/3.clima_de.mp3' },
+                { id: 4, title: '4. DER EINFLUSS DES TOURISMUS IM NORDEN THAILANDS', url: BASE_URL + 'german/4.impacto_turismo_norte_de.mp3' },
+                { id: 5, title: '5. GESCHICHTE NORDTHAILANDS', url: BASE_URL + 'german/5.historia_norte_de.mp3' },
+                { id: 6, title: '6. DIE SPRACHE DES NORDENS: KHAM MUEANG', url: BASE_URL + 'german/6.idioma_kham_mueang_de.mp3' },
+                { id: 7, title: '7. PHILOSOPHIE NORDTHAILANDS', url: BASE_URL + 'german/7.filosofia_norte_de.mp3' },
+                { id: 8, title: '8. LEBENSWEISEN UND BRÄUCHE NORDTHAILANDS', url: BASE_URL + 'german/8.costumbres_vida_norte_de.mp3' },
+                { id: 9, title: '9. MÖNCHE, GLAUBE UND GLAUBENSVORSTELLUNGEN IM NORDEN', url: BASE_URL + 'german/9.monjes_fe_creencias_de.mp3' },
+                { id: 10, title: '10. GASTRONOMIE', url: BASE_URL + 'german/10.gastronomia_de.mp3' },
+                { id: 11, title: '11. THERMALQUELLEN VON MAE KACHAN', url: BASE_URL + 'german/11.aguas_termales_mae_kachan_de.mp3' },
+                { id: 12, title: '12. BERGSTAMM MAE KACHAN', url: BASE_URL + 'german/12.tribu_montanesa_mae_kachan_de.mp3' },
+                { id: 13, title: '13. WEISSER TEMPEL WAT RONG KHUN', url: BASE_URL + 'german/13.templo_blanco_wat_rong_khun_de.mp3' },
+                { id: 14, title: '14. BLAUER TEMPEL WAT RONG SUEA TEN', url: BASE_URL + 'german/14.templo_azul_wat_rong_suea_ten_de.mp3' },
+                { id: 15, title: '15. TEMPEL HUAY PLA KANG', url: BASE_URL + 'german/15.templo_huay_pla_kang_de.mp3' },
+                { id: 16, title: '16. ABSCHLIESSENDER GRUSS', url: BASE_URL + 'german/16.saludo_final_de.mp3' }
+            ],
+            العربية: [
+                { id: 1, title: '1. المقدمة – مرحباً بكم', url: BASE_URL + 'arabic/1.introduccion_bienvenida_ar.mp3' },
+                { id: 2, title: '2. الوصول إلى شيانغ ماي | بوابة الشمال', url: BASE_URL + 'arabic/2.llegada_chiang_mai_ar.mp3' },
+                { id: 3, title: '3. المناخ', url: BASE_URL + 'arabic/3.clima_ar.mp3' },
+                { id: 4, title: '4. تأثير السياحة في شمال تايلاند', url: BASE_URL + 'arabic/4.impacto_turismo_norte_ar.mp3' },
+                { id: 5, title: '5. تاريخ شمال تايلاند', url: BASE_URL + 'arabic/5.historia_norte_ar.mp3' },
+                { id: 6, title: '6. لغة الشمال: خام موينغ', url: BASE_URL + 'arabic/6.idioma_kham_mueang_ar.mp3' },
+                { id: 7, title: '7. فلسفة شمال تايلاند', url: BASE_URL + 'arabic/7.filosofia_norte_ar.mp3' },
+                { id: 8, title: '8. أساليب الحياة والعادات في شمال تايلاند', url: BASE_URL + 'arabic/8.costumbres_vida_norte_ar.mp3' },
+                { id: 9, title: '9. الرهبان والإيمان والمعتقدات في الشمال', url: BASE_URL + 'arabic/9.monjes_fe_creencias_ar.mp3' },
+                { id: 10, title: '10. فن الطهي', url: BASE_URL + 'arabic/10.gastronomia_ar.mp3' },
+                { id: 11, title: '11. الينابيع الساخنة في ماي كاتشان', url: BASE_URL + 'arabic/11.aguas_termales_mae_kachan_ar.mp3' },
+                { id: 12, title: '12. قبيلة ماي كاتشان الجبلية', url: BASE_URL + 'arabic/12.tribu_montanesa_mae_kachan_ar.mp3' },
+                { id: 13, title: '13. المعبد الأبيض وات رونغ خون', url: BASE_URL + 'arabic/13.templo_blanco_wat_rong_khun_ar.mp3' },
+                { id: 14, title: '14. المعبد الأزرق وات رونغ سوا تن', url: BASE_URL + 'arabic/14.templo_azul_wat_rong_suea_ten_ar.mp3' },
+                { id: 15, title: '15. معبد هواي بلا كانغ', url: BASE_URL + 'arabic/15.templo_huay_pla_kang_ar.mp3' },
+                { id: 16, title: '16. التحية الختامية', url: BASE_URL + 'arabic/16.saludo_final_ar.mp3' }
+            ],
+            বাংলা: [
+                { id: 1, title: '1. ভূমিকা – স্বাগতম', url: BASE_URL + 'bengali/1.introduccion_bienvenida_bn.mp3' },
+                { id: 2, title: '2. চিয়াং মাইয়ে আগমন | উত্তরের প্রবেশদ্বার', url: BASE_URL + 'bengali/2.llegada_chiang_mai_bn.mp3' },
+                { id: 3, title: '3. জলবায়ু', url: BASE_URL + 'bengali/3.clima_bn.mp3' },
+                { id: 4, title: '4. উত্তর থাইল্যান্ডে পর্যটনের প্রভাব', url: BASE_URL + 'bengali/4.impacto_turismo_norte_bn.mp3' },
+                { id: 5, title: '5. উত্তর থাইল্যান্ডের ইতিহাস', url: BASE_URL + 'bengali/5.historia_norte_bn.mp3' },
+                { id: 6, title: '6. উত্তরের ভাষা: খাম মুএয়াং', url: BASE_URL + 'bengali/6.idioma_kham_mueang_bn.mp3' },
+                { id: 7, title: '7. উত্তর থাইল্যান্ডের দর্শন', url: BASE_URL + 'bengali/7.filosofia_norte_bn.mp3' },
+                { id: 8, title: '8. উত্তর থাইল্যান্ডের জীবনযাপন ও রীতিনীতি', url: BASE_URL + 'bengali/8.costumbres_vida_norte_bn.mp3' },
+                { id: 9, title: '9. উত্তরে ভিক্ষু, বিশ্বাস ও ধর্মীয় ধারণা', url: BASE_URL + 'bengali/9.monjes_fe_creencias_bn.mp3' },
+                { id: 10, title: '10. রন্ধনশিল্প', url: BASE_URL + 'bengali/10.gastronomia_bn.mp3' },
+                { id: 11, title: '11. মায়ে কাচানের উষ্ণ প্রস্রবণ', url: BASE_URL + 'bengali/11.aguas_termales_mae_kachan_bn.mp3' },
+                { id: 12, title: '12. মায়ে কাচানের পাহাড়ি উপজাতি', url: BASE_URL + 'bengali/12.tribu_montanesa_mae_kachan_bn.mp3' },
+                { id: 13, title: '13. সাদা মন্দির ওয়াট রং খুন', url: BASE_URL + 'bengali/13.templo_blanco_wat_rong_khun_bn.mp3' },
+                { id: 14, title: '14. নীল মন্দির ওয়াট রং সুয়া তেন', url: BASE_URL + 'bengali/14.templo_azul_wat_rong_suea_ten_bn.mp3' },
+                { id: 15, title: '15. হুয়াই প্লা কাং মন্দির', url: BASE_URL + 'bengali/15.templo_huay_pla_kang_bn.mp3' },
+                { id: 16, title: '16. সমাপনী শুভেচ্ছা', url: BASE_URL + 'bengali/16.saludo_final_bn.mp3' }
+            ],
+            Čeština: [
+                { id: 1, title: '1. ÚVOD – VÍTEJTE', url: BASE_URL + 'czech/1.introduccion_bienvenida_cz.mp3' },
+                { id: 2, title: '2. PŘÍJEZD DO CHIANG MAI | BRÁNA SEVERU', url: BASE_URL + 'czech/2.llegada_chiang_mai_cz.mp3' },
+                { id: 3, title: '3. KLIMA', url: BASE_URL + 'czech/3.clima_cz.mp3' },
+                { id: 4, title: '4. VLIV TURISMU NA SEVERU THAJSKA', url: BASE_URL + 'czech/4.impacto_turismo_norte_cz.mp3' },
+                { id: 5, title: '5. HISTORIE SEVERNÍHO THAJSKA', url: BASE_URL + 'czech/5.historia_norte_cz.mp3' },
+                { id: 6, title: '6. JAZYK SEVERU: KHAM MUEANG', url: BASE_URL + 'czech/6.idioma_kham_mueang_cz.mp3' },
+                { id: 7, title: '7. FILOZOFIE SEVERNÍHO THAJSKA', url: BASE_URL + 'czech/7.filosofia_norte_cz.mp3' },
+                { id: 8, title: '8. ŽIVOTNÍ STYL A ZVYKY SEVERNÍHO THAJSKA', url: BASE_URL + 'czech/8.costumbres_vida_norte_cz.mp3' },
+                { id: 9, title: '9. MNICHI, VÍRA A PŘEDSTAVY NA SEVERU', url: BASE_URL + 'czech/9.monjes_fe_creencias_cz.mp3' },
+                { id: 10, title: '10. GASTRONOMIE', url: BASE_URL + 'czech/10.gastronomia_cz.mp3' },
+                { id: 11, title: '11. TERMÁLNÍ PRAMENY MAE KACHAN', url: BASE_URL + 'czech/11.aguas_termales_mae_kachan_cz.mp3' },
+                { id: 12, title: '12. HORSKÝ KMEN MAE KACHAN', url: BASE_URL + 'czech/12.tribu_montanesa_mae_kachan_cz.mp3' },
+                { id: 13, title: '13. BÍLÝ CHRÁM WAT RONG KHUN', url: BASE_URL + 'czech/13.templo_blanco_wat_rong_khun_cz.mp3' },
+                { id: 14, title: '14. MODRÝ CHRÁM WAT RONG SUEA TEN', url: BASE_URL + 'czech/14.templo_azul_wat_rong_suea_ten_cz.mp3' },
+                { id: 15, title: '15. CHRÁM HUAY PLA KANG', url: BASE_URL + 'czech/15.templo_huay_pla_kang_cz.mp3' },
+                { id: 16, title: '16. ROZLOUČENÍ', url: BASE_URL + 'czech/16.saludo_final_cz.mp3' }
+            ],
+            Dansk: [
+                { id: 1, title: '1. INTRODUKTION – VELKOMMEN', url: BASE_URL + 'danish/1.introduccion_bienvenida_da.mp3' },
+                { id: 2, title: '2. ANKOMST TIL CHIANG MAI | PORTEN TIL NORD', url: BASE_URL + 'danish/2.llegada_chiang_mai_da.mp3' },
+                { id: 3, title: '3. KLIMA', url: BASE_URL + 'danish/3.clima_da.mp3' },
+                { id: 4, title: '4. TURISMENS INDFLYDELSE I DET NORDLIGE THAILAND', url: BASE_URL + 'danish/4.impacto_turismo_norte_da.mp3' },
+                { id: 5, title: '5. NORDRTHAILANDS HISTORIE', url: BASE_URL + 'danish/5.historia_norte_da.mp3' },
+                { id: 6, title: '6. SPROGET I NORD: KHAM MUEANG', url: BASE_URL + 'danish/6.idioma_kham_mueang_da.mp3' },
+                { id: 7, title: '7. NORDTHAILANDS FILOSOFI', url: BASE_URL + 'danish/7.filosofia_norte_da.mp3' },
+                { id: 8, title: '8. LIVSSTIL OG SKIKKE I NORDTHAILAND', url: BASE_URL + 'danish/8.costumbres_vida_norte_da.mp3' },
+                { id: 9, title: '9. MUNKE, TRO OG OVERBEVISNINGER I NORD', url: BASE_URL + 'danish/9.monjes_fe_creencias_da.mp3' },
+                { id: 10, title: '10. GASTRONOMI', url: BASE_URL + 'danish/10.gastronomia_da.mp3' },
+                { id: 11, title: '11. MAE KACHAN VARME KILDER', url: BASE_URL + 'danish/11.aguas_termales_mae_kachan_da.mp3' },
+                { id: 12, title: '12. MAE KACHAN BJERGSTAMME', url: BASE_URL + 'danish/12.tribu_montanesa_mae_kachan_da.mp3' },
+                { id: 13, title: '13. DET HVIDE TEMPEL WAT RONG KHUN', url: BASE_URL + 'danish/13.templo_blanco_wat_rong_khun_da.mp3' },
+                { id: 14, title: '14. DET BLÅ TEMPEL WAT RONG SUEA TEN', url: BASE_URL + 'danish/14.templo_azul_wat_rong_suea_ten_da.mp3' },
+                { id: 15, title: '15. HUAY PLA KANG TEMPEL', url: BASE_URL + 'danish/15.templo_huay_pla_kang_da.mp3' },
+                { id: 16, title: '16. AFSLUTTENDE HILSEN', url: BASE_URL + 'danish/16.saludo_final_da.mp3' }
+            ],
+            Nederlands: [
+                { id: 1, title: '1. INLEIDING – WELKOM', url: BASE_URL + 'dutch/1.introduccion_bienvenida_nl.mp3' },
+                { id: 2, title: '2. AANKOMST IN CHIANG MAI | POORT NAAR HET NOORDEN', url: BASE_URL + 'dutch/2.llegada_chiang_mai_nl.mp3' },
+                { id: 3, title: '3. KLIMAAT', url: BASE_URL + 'dutch/3.clima_nl.mp3' },
+                { id: 4, title: '4. DE IMPACT VAN TOERISME IN NOORD-THAILAND', url: BASE_URL + 'dutch/4.impacto_turismo_norte_nl.mp3' },
+                { id: 5, title: '5. GESCHIEDENIS VAN NOORD-THAILAND', url: BASE_URL + 'dutch/5.historia_norte_nl.mp3' },
+                { id: 6, title: '6. DE TAAL VAN HET NOORDEN: KHAM MUEANG', url: BASE_URL + 'dutch/6.idioma_kham_mueang_nl.mp3' },
+                { id: 7, title: '7. FILOSOFIE VAN NOORD-THAILAND', url: BASE_URL + 'dutch/7.filosofia_norte_nl.mp3' },
+                { id: 8, title: '8. LEVENSWIJZE EN GEBRUIKEN VAN NOORD-THAILAND', url: BASE_URL + 'dutch/8.costumbres_vida_norte_nl.mp3' },
+                { id: 9, title: '9. MONNIKEN, GELOOF EN OVERTUIGINGEN IN HET NOORDEN', url: BASE_URL + 'dutch/9.monjes_fe_creencias_nl.mp3' },
+                { id: 10, title: '10. GASTRONOMIE', url: BASE_URL + 'dutch/10.gastronomia_nl.mp3' },
+                { id: 11, title: '11. WARME BRONNEN VAN MAE KACHAN', url: BASE_URL + 'dutch/11.aguas_termales_mae_kachan_nl.mp3' },
+                { id: 12, title: '12. BERGSTAM VAN MAE KACHAN', url: BASE_URL + 'dutch/12.tribu_montanesa_mae_kachan_nl.mp3' },
+                { id: 13, title: '13. WITTE TEMPEL WAT RONG KHUN', url: BASE_URL + 'dutch/13.templo_blanco_wat_rong_khun_nl.mp3' },
+                { id: 14, title: '14. BLAUWE TEMPEL WAT RONG SUEA TEN', url: BASE_URL + 'dutch/14.templo_azul_wat_rong_suea_ten_nl.mp3' },
+                { id: 15, title: '15. HUAY PLA KANG TEMPEL', url: BASE_URL + 'dutch/15.templo_huay_pla_kang_nl.mp3' },
+                { id: 16, title: '16. AFSLUITENDE GROET', url: BASE_URL + 'dutch/16.saludo_final_nl.mp3' }
+            ],
+            english: [
+                { id: 1, title: '1. Introduction – Welcome', url: BASE_URL + 'english/1.introduccion_bienvenida_en.mp3' },
+                { id: 2, title: '2. Arrival in Chiang Mai | Gateway to the North', url: BASE_URL + 'english/2.llegada_chiang_mai_en.mp3' },
+                { id: 3, title: '3. Climate', url: BASE_URL + 'english/3.clima_en.mp3' },
+                { id: 4, title: '4. Impact of Tourism in Northern Thailand', url: BASE_URL + 'english/4.impacto_turismo_norte_en.mp3' },
+                { id: 5, title: '5. History of Northern Thailand', url: BASE_URL + 'english/5.historia_norte_en.mp3' },
+                { id: 6, title: '6. Language of the North: Kham Mueang', url: BASE_URL + 'english/6.idioma_kham_mueang_en.mp3' },
+                { id: 7, title: '7. Philosophy of Northern Thailand', url: BASE_URL + 'english/7.filosofia_norte_en.mp3' },
+                { id: 8, title: '8. Lifestyle and Customs of Northern Thailand', url: BASE_URL + 'english/8.costumbres_vida_norte_en.mp3' },
+                { id: 9, title: '9. Monks, Faith and Religious Beliefs in the North', url: BASE_URL + 'english/9.monjes_fe_creencias_en.mp3' },
+                { id: 10, title: '10. Gastronomy', url: BASE_URL + 'english/10.gastronomia_en.mp3' },
+                { id: 11, title: '11. Mae Kachan Hot Springs', url: BASE_URL + 'english/11.aguas_termales_mae_kachan_en.mp3' },
+                { id: 12, title: '12. Hill Tribes of Mae Kachan', url: BASE_URL + 'english/12.tribu_montanesa_mae_kachan_en.mp3' },
+                { id: 13, title: '13. The White Temple: Wat Rong Khun', url: BASE_URL + 'english/13.templo_blanco_wat_rong_khun_en.mp3' },
+                { id: 14, title: '14. The Blue Temple: Wat Rong Suea Ten', url: BASE_URL + 'english/14.templo_azul_wat_rong_suea_ten_en.mp3' },
+                { id: 15, title: '15. Huay Pla Kang Temple', url: BASE_URL + 'english/15.templo_huay_pla_kang_en.mp3' },
+                { id: 16, title: '16. Closing Remarks', url: BASE_URL + 'english/16.saludo_final_en.mp3' }
+            ],
+            Español_España: [
+                { id: 1, title: '1. Introducción – Bienvenida', url: BASE_URL + 'spanish/1.introduccion_bienvenida_es.mp3' },
+                { id: 2, title: '2. Llegada a Chiang Mai | La puerta del Norte', url: BASE_URL + 'spanish/2.llegada_chiang_mai_es.mp3' },
+                { id: 3, title: '3. El Clima', url: BASE_URL + 'spanish/3.clima_es.mp3' },
+                { id: 4, title: '4. Impacto del turismo en el norte de Tailandia', url: BASE_URL + 'spanish/4.impacto_turismo_norte_es.mp3' },
+                { id: 5, title: '5. Historia del norte de Tailandia', url: BASE_URL + 'spanish/5.historia_norte_es.mp3' },
+                { id: 6, title: '6. El idioma del norte: Kham Mueang', url: BASE_URL + 'spanish/6.idioma_kham_mueang_es.mp3' },
+                { id: 7, title: '7. Filosofía del norte de Tailandia', url: BASE_URL + 'spanish/7.filosofia_norte_es.mp3' },
+                { id: 8, title: '8. Estilo de vida y costumbres del norte', url: BASE_URL + 'spanish/8.costumbres_vida_norte_es.mp3' },
+                { id: 9, title: '9. Monjes, fe y creencias religiosas en el norte', url: BASE_URL + 'spanish/9.monjes_fe_creencias_es.mp3' },
+                { id: 10, title: '10. Gastronomía', url: BASE_URL + 'spanish/10.gastronomia_es.mp3' },
+                { id: 11, title: '11. Aguas termales de Mae Kachan', url: BASE_URL + 'spanish/11.aguas_termales_mae_kachan_es.mp3' },
+                { id: 12, title: '12. Tribus de las colinas de Mae Kachan', url: BASE_URL + 'spanish/12.tribu_montanesa_mae_kachan_es.mp3' },
+                { id: 13, title: '13. El Templo Blanco: Wat Rong Khun', url: BASE_URL + 'spanish/13.templo_blanco_wat_rong_khun_es.mp3' },
+                { id: 14, title: '14. El Templo Azul: Wat Rong Suea Ten', url: BASE_URL + 'spanish/14.templo_azul_wat_rong_suea_ten_es.mp3' },
+                { id: 15, title: '15. Templo Huay Pla Kang', url: BASE_URL + 'spanish/15.templo_huay_pla_kang_es.mp3' },
+                { id: 16, title: '16. Despedida y saludo final', url: BASE_URL + 'spanish/16.saludo_final_es.mp3' }
+            ],
+            Español_Latam: [
+                { id: 1, title: '1. Introducción – Bienvenidos', url: BASE_URL + 'spanish_latam/1.introduccion_bienvenida_latam.mp3' },
+                { id: 2, title: '2. Llegada a Chiang Mai | La puerta al Norte', url: BASE_URL + 'spanish_latam/2.llegada_chiang_mai_latam.mp3' },
+                { id: 3, title: '3. El clima', url: BASE_URL + 'spanish_latam/3.clima_latam.mp3' },
+                { id: 4, title: '4. Impacto del turismo en el norte de Tailandia', url: BASE_URL + 'spanish_latam/4.impacto_turismo_norte_latam.mp3' },
+                { id: 5, title: '5. Historia del norte de Tailandia', url: BASE_URL + 'spanish_latam/5.historia_norte_latam.mp3' },
+                { id: 6, title: '6. El idioma del norte: Kham Mueang', url: BASE_URL + 'spanish_latam/6.idioma_kham_mueang_latam.mp3' },
+                { id: 7, title: '7. Filosofía del norte de Tailandia', url: BASE_URL + 'spanish_latam/7.filosofia_norte_latam.mp3' },
+                { id: 8, title: '8. Estilo de vida y costumbres del norte', url: BASE_URL + 'spanish_latam/8.costumbres_vida_norte_latam.mp3' },
+                { id: 9, title: '9. Monjes, fe y creencias religiosas en el norte', url: BASE_URL + 'spanish_latam/9.monjes_fe_creencias_latam.mp3' },
+                { id: 10, title: '10. Gastronomía', url: BASE_URL + 'spanish_latam/10.gastronomia_latam.mp3' },
+                { id: 11, title: '11. Aguas termales de Mae Kachan', url: BASE_URL + 'spanish_latam/11.aguas_termales_mae_kachan_latam.mp3' },
+                { id: 12, title: '12. Tribus de las montañas de Mae Kachan', url: BASE_URL + 'spanish_latam/12.tribu_montanesa_mae_kachan_latam.mp3' },
+                { id: 13, title: '13. El Templo Blanco: Wat Rong Khun', url: BASE_URL + 'spanish_latam/13.templo_blanco_wat_rong_khun_latam.mp3' },
+                { id: 14, title: '14. El Templo Azul: Wat Rong Suea Ten', url: BASE_URL + 'spanish_latam/14.templo_azul_wat_rong_suea_ten_latam.mp3' },
+                { id: 15, title: '15. Templo Huay Pla Kang', url: BASE_URL + 'spanish_latam/15.templo_huay_pla_kang_latam.mp3' },
+                { id: 16, title: '16. Despedida final', url: BASE_URL + 'spanish_latam/16.saludo_final_latam.mp3' }
+            ],
+            Filipino: [
+                { id: 1, title: '1. Panimula – Maligayang Pagdating', url: BASE_URL + 'filipino/1.introduccion_bienvenida_fil.mp3' },
+                { id: 2, title: '2. Pagdating sa Chiang Mai | Pintuan ng Hilaga', url: BASE_URL + 'filipino/2.llegada_chiang_mai_fil.mp3' },
+                { id: 3, title: '3. Klima', url: BASE_URL + 'filipino/3.clima_fil.mp3' },
+                { id: 4, title: '4. Epekto ng Turismo sa Hilagang Thailand', url: BASE_URL + 'filipino/4.impacto_turismo_norte_fil.mp3' },
+                { id: 5, title: '5. Kasaysayan ng Hilagang Thailand', url: BASE_URL + 'filipino/5.historia_norte_fil.mp3' },
+                { id: 6, title: '6. Wika ng Hilaga: Kham Mueang', url: BASE_URL + 'filipino/6.idioma_kham_mueang_fil.mp3' },
+                { id: 7, title: '7. Pilosopiya ng Hilagang Thailand', url: BASE_URL + 'filipino/7.filosofia_norte_fil.mp3' },
+                { id: 8, title: '8. Pamumuhay at mga Kaugalian sa Hilaga', url: BASE_URL + 'filipino/8.costumbres_vida_norte_fil.mp3' },
+                { id: 9, title: '9. Mga Monghe, Pananampalataya, at Paniniwalang Panrelihiyon sa Hilaga', url: BASE_URL + 'filipino/9.monjes_fe_creencias_fil.mp3' },
+                { id: 10, title: '10. Gastronomiya', url: BASE_URL + 'filipino/10.gastronomia_fil.mp3' },
+                { id: 11, title: '11. Mainit na Batis ng Mae Kachan', url: BASE_URL + 'filipino/11.aguas_termales_mae_kachan_fil.mp3' },
+                { id: 12, title: '12. Mga Tribo sa Bundok ng Mae Kachan', url: BASE_URL + 'filipino/12.tribu_montanesa_mae_kachan_fil.mp3' },
+                { id: 13, title: '13. Ang Puting Templo: Wat Rong Khun', url: BASE_URL + 'filipino/13.templo_blanco_wat_rong_khun_fil.mp3' },
+                { id: 14, title: '14. Ang Asul na Templo: Wat Rong Suea Ten', url: BASE_URL + 'filipino/14.templo_azul_wat_rong_suea_ten_fil.mp3' },
+                { id: 15, title: '15. Templo ng Huay Pla Kang', url: BASE_URL + 'filipino/15.templo_huay_pla_kang_fil.mp3' },
+                { id: 16, title: '16. Pangwakas na Pagbati', url: BASE_URL + 'filipino/16.saludo_final_fil.mp3' }
+            ],
+            Français: [
+                { id: 1, title: '1. Introduction – Bienvenue', url: BASE_URL + 'french/1.introduccion_bienvenida_fr.mp3' },
+                { id: 2, title: '2. Arrivée à Chiang Mai | La porte du Nord', url: BASE_URL + 'french/2.llegada_chiang_mai_fr.mp3' },
+                { id: 3, title: '3. Le Climat', url: BASE_URL + 'french/3.clima_fr.mp3' },
+                { id: 4, title: '4. Impact du tourisme dans le nord de la Thaïlande', url: BASE_URL + 'french/4.impacto_turismo_norte_fr.mp3' },
+                { id: 5, title: '5. Histoire du nord de la Thaïlande', url: BASE_URL + 'french/5.historia_norte_fr.mp3' },
+                { id: 6, title: '6. La langue du Nord : Kham Mueang', url: BASE_URL + 'french/6.idioma_kham_mueang_fr.mp3' },
+                { id: 7, title: '7. Philosophie du nord de la Thaïlande', url: BASE_URL + 'french/7.filosofia_norte_fr.mp3' },
+                { id: 8, title: '8. Mode de vie et coutumes du Nord', url: BASE_URL + 'french/8.costumbres_vida_norte_fr.mp3' },
+                { id: 9, title: '9. Moines, foi et croyances religieuses dans le Nord', url: BASE_URL + 'french/9.monjes_fe_creencias_fr.mp3' },
+                { id: 10, title: '10. Gastronomie', url: BASE_URL + 'french/10.gastronomia_fr.mp3' },
+                { id: 11, title: '11. Sources thermales de Mae Kachan', url: BASE_URL + 'french/11.aguas_termales_mae_kachan_fr.mp3' },
+                { id: 12, title: '12. Tribus montagnardes de Mae Kachan', url: BASE_URL + 'french/12.tribu_montanesa_mae_kachan_fr.mp3' },
+                { id: 13, title: '13. Le Temple Blanc : Wat Rong Khun', url: BASE_URL + 'french/13.templo_blanco_wat_rong_khun_fr.mp3' },
+                { id: 14, title: '14. Le Temple Bleu : Wat Rong Suea Ten', url: BASE_URL + 'french/14.templo_azul_wat_rong_suea_ten_fr.mp3' },
+                { id: 15, title: '15. Temple Huay Pla Kang', url: BASE_URL + 'french/15.templo_huay_pla_kang_fr.mp3' },
+                { id: 16, title: '16. Salutations finales', url: BASE_URL + 'french/16.saludo_final_fr.mp3' }
+            ],
+            Ελληνικά: [
+                { id: 1, title: '1. Εισαγωγή – Καλωσόρισμα', url: BASE_URL + 'greek/1.introduccion_bienvenida_gr.mp3' },
+                { id: 2, title: '2. Άφιξη στο Τσιάνγκ Μάι | Η Πύλη του Βορρά', url: BASE_URL + 'greek/2.llegada_chiang_mai_gr.mp3' },
+                { id: 3, title: '3. Κλίμα', url: BASE_URL + 'greek/3.clima_gr.mp3' },
+                { id: 4, title: '4. Ο αντίκτυπος του τουρισμού στη Βόρεια Ταϊλάνδη', url: BASE_URL + 'greek/4.impacto_turismo_norte_gr.mp3' },
+                { id: 5, title: '5. Ιστορία της Βόρειας Ταϊλάνδης', url: BASE_URL + 'greek/5.historia_norte_gr.mp3' },
+                { id: 6, title: '6. Η γλώσσα του Βορρά: Κχαμ Μουάνγκ', url: BASE_URL + 'greek/6.idioma_kham_mueang_gr.mp3' },
+                { id: 7, title: '7. Φιλοσοφία της Βόρειας Ταϊλάνδης', url: BASE_URL + 'greek/7.filosofia_norte_gr.mp3' },
+                { id: 8, title: '8. Τρόπος ζωής και έθιμα του Βορρά', url: BASE_URL + 'greek/8.costumbres_vida_norte_gr.mp3' },
+                { id: 9, title: '9. Μοναχοί, πίστη και θρησκευτικές πεποιθήσεις στον Βορρά', url: BASE_URL + 'greek/9.monjes_fe_creencias_gr.mp3' },
+                { id: 10, title: '10. Γαστρονομία', url: BASE_URL + 'greek/10.gastronomia_gr.mp3' },
+                { id: 11, title: '11. Θερμές πηγές Μάε Κατσάν', url: BASE_URL + 'greek/11.aguas_termales_mae_kachan_gr.mp3' },
+                { id: 12, title: '12. Ορεινές φυλές του Μάε Κατσάν', url: BASE_URL + 'greek/12.tribu_montanesa_mae_kachan_gr.mp3' },
+                { id: 13, title: '13. Ο Λευκός Ναός: Wat Rong Khun', url: BASE_URL + 'greek/13.templo_blanco_wat_rong_khun_gr.mp3' },
+                { id: 14, title: '14. Ο Μπλε Ναός: Wat Rong Suea Ten', url: BASE_URL + 'greek/14.templo_azul_wat_rong_suea_ten_gr.mp3' },
+                { id: 15, title: '15. Ναός Huay Pla Kang', url: BASE_URL + 'greek/15.templo_huay_pla_kang_gr.mp3' },
+                { id: 16, title: '16. Τελικός χαιρετισμός', url: BASE_URL + 'greek/16.saludo_final_gr.mp3' }
+            ],
+            हिन्दी: [
+                { id: 1, title: '1. प्रस्तावना – स्वागत है', url: BASE_URL + 'hindi/1.introduccion_bienvenida_hi.mp3' },
+                { id: 2, title: '2. चियांग माई में आगमन | उत्तर का द्वार', url: BASE_URL + 'hindi/2.llegada_chiang_mai_hi.mp3' },
+                { id: 3, title: '3. जलवायु', url: BASE_URL + 'hindi/3.clima_hi.mp3' },
+                { id: 4, title: '4. उत्तरी थाईलैंड में पर्यटन का प्रभाव', url: BASE_URL + 'hindi/4.impacto_turismo_norte_hi.mp3' },
+                { id: 5, title: '5. उत्तरी थाईलैंड का इतिहास', url: BASE_URL + 'hindi/5.historia_norte_hi.mp3' },
+                { id: 6, title: '6. उत्तर की भाषा: खाम मुआंग', url: BASE_URL + 'hindi/6.idioma_kham_mueang_hi.mp3' },
+                { id: 7, title: '7. उत्तरी थाईलैंड का दर्शन', url: BASE_URL + 'hindi/7.filosofia_norte_hi.mp3' },
+                { id: 8, title: '8. उत्तरी थाईलैंड की जीवनशैली और रीति-रिवाज', url: BASE_URL + 'hindi/8.costumbres_vida_norte_hi.mp3' },
+                { id: 9, title: '9. उत्तर में भिक्षु, आस्था और विश्वास', url: BASE_URL + 'hindi/9.monjes_fe_creencias_hi.mp3' },
+                { id: 10, title: '10. खान-पान (गैस्ट्रोनॉमी)', url: BASE_URL + 'hindi/10.gastronomia_hi.mp3' },
+                { id: 11, title: '11. माई कचान के गर्म झरने', url: BASE_URL + 'hindi/11.aguas_termales_mae_kachan_hi.mp3' },
+                { id: 12, title: '12. माई कचान की पहाड़ी जनजाति', url: BASE_URL + 'hindi/12.tribu_montanesa_mae_kachan_hi.mp3' },
+                { id: 13, title: '13. सफेद मंदिर (वाट रोंग खुन)', url: BASE_URL + 'hindi/13.templo_blanco_wat_rong_khun_hi.mp3' },
+                { id: 14, title: '14. नीला मंदिर (वाट रोंग सुए तेन)', url: BASE_URL + 'hindi/14.templo_azul_wat_rong_suea_ten_hi.mp3' },
+                { id: 15, title: '15. हुआई प्ला कांग मंदिर', url: BASE_URL + 'hindi/15.templo_huay_pla_kang_hi.mp3' },
+                { id: 16, title: '16. अंतिम विदाई संदेश', url: BASE_URL + 'hindi/16.saludo_final_hi.mp3' }
+            ],
+            Magyar: [
+                { id: 1, title: '1. BEVEZETÉS – ÜDVÖZÖLJÜK', url: BASE_URL + 'hungarian/1.introduccion_bienvenida_hu.mp3' },
+                { id: 2, title: '2. ÉRKEZÉS CHIANG MAIBA | ÉSZAK KAPUJA', url: BASE_URL + 'hungarian/2.llegada_chiang_mai_hu.mp3' },
+                { id: 3, title: '3. ÉGHAJLAT', url: BASE_URL + 'hungarian/3.clima_hu.mp3' },
+                { id: 4, title: '4. A TURIZMUS HATÁSA ÉSZAK-THAIFÖLDÖN', url: BASE_URL + 'hungarian/4.impacto_turismo_norte_hu.mp3' },
+                { id: 5, title: '5. ÉSZAK-THAIFÖLD TÖRTÉNETE', url: BASE_URL + 'hungarian/5.historia_norte_hu.mp3' },
+                { id: 6, title: '6. ÉSZAK NYELVE: KHAM MUEANG', url: BASE_URL + 'hungarian/6.idioma_kham_mueang_hu.mp3' },
+                { id: 7, title: '7. ÉSZAK-THAIFÖLD FILOZÓFIÁJA', url: BASE_URL + 'hungarian/7.filosofia_norte_hu.mp3' },
+                { id: 8, title: '8. ÉSZAK-THAIFÖLD ÉLETMÓDJA ÉS SZOKÁSAI', url: BASE_URL + 'hungarian/8.costumbres_vida_norte_hu.mp3' },
+                { id: 9, title: '9. SZERZETESEK, HIT ÉS MEGGYŐZŐDÉSEK ÉSZAKON', url: BASE_URL + 'hungarian/9.monjes_fe_creencias_hu.mp3' },
+                { id: 10, title: '10. GASZTRONÓMIA', url: BASE_URL + 'hungarian/10.gastronomia_hu.mp3' },
+                { id: 11, title: '11. MAE KACHAN HÉVÍZFORRÁSOK', url: BASE_URL + 'hungarian/11.aguas_termales_mae_kachan_hu.mp3' },
+                { id: 12, title: '12. MAE KACHAN HEGYI TÖRZS', url: BASE_URL + 'hungarian/12.tribu_montanesa_mae_kachan_hu.mp3' },
+                { id: 13, title: '13. WAT RONG KHUN FEHÉR TEMPLOM', url: BASE_URL + 'hungarian/13.templo_blanco_wat_rong_khun_hu.mp3' },
+                { id: 14, title: '14. WAT RONG SUEA TEN KÉK TEMPLOM', url: BASE_URL + 'hungarian/14.templo_azul_wat_rong_suea_ten_hu.mp3' },
+                { id: 15, title: '15. HUAY PLA KANG TEMPLOM', url: BASE_URL + 'hungarian/15.templo_huay_pla_kang_hu.mp3' },
+                { id: 16, title: '16. ZÁRÓ ÜDVÖZLET', url: BASE_URL + 'hungarian/16.saludo_final_hu.mp3' }
+            ],
+            Bahasa_Indonesia: [
+                { id: 1, title: '1. PENDAHULUAN – SELAMAT DATANG', url: BASE_URL + 'indonesian/1.introduccion_bienvenida_id.mp3' },
+                { id: 2, title: '2. TIBA DI CHIANG MAI | GERBANG UTARA', url: BASE_URL + 'indonesian/2.llegada_chiang_mai_id.mp3' },
+                { id: 3, title: '3. IKLIM', url: BASE_URL + 'indonesian/3.clima_id.mp3' },
+                { id: 4, title: '4. DAMPAK PARIWISATA DI THAILAND UTARA', url: BASE_URL + 'indonesian/4.impacto_turismo_norte_id.mp3' },
+                { id: 5, title: '5. SEJARAH THAILAND UTARA', url: BASE_URL + 'indonesian/5.historia_norte_id.mp3' },
+                { id: 6, title: '6. BAHASA UTARA: KHAM MUEANG', url: BASE_URL + 'indonesian/6.idioma_kham_mueang_id.mp3' },
+                { id: 7, title: '7. FILOSOFI THAILAND UTARA', url: BASE_URL + 'indonesian/7.filosofia_norte_id.mp3' },
+                { id: 8, title: '8. GAYA HIDUP DAN ADAT ISTIADAT THAILAND UTARA', url: BASE_URL + 'indonesian/8.costumbres_vida_norte_id.mp3' },
+                { id: 9, title: '9. BIKSU, IMAN, DAN KEPERCAYAAN DI UTARA', url: BASE_URL + 'indonesian/9.monjes_fe_creencias_id.mp3' },
+                { id: 10, title: '10. GASTRONOMI', url: BASE_URL + 'indonesian/10.gastronomia_id.mp3' },
+                { id: 11, title: '11. MATA AIR PANAS MAE KACHAN', url: BASE_URL + 'indonesian/11.aguas_termales_mae_kachan_id.mp3' },
+                { id: 12, title: '12. SUKU GUNUNG MAE KACHAN', url: BASE_URL + 'indonesian/12.tribu_montanesa_mae_kachan_id.mp3' },
+                { id: 13, title: '13. CANDI PUTIH WAT RONG KHUN', url: BASE_URL + 'indonesian/13.templo_blanco_wat_rong_khun_id.mp3' },
+                { id: 14, title: '14. CANDI BIRU WAT RONG SUEA TEN', url: BASE_URL + 'indonesian/14.templo_azul_wat_rong_suea_ten_id.mp3' },
+                { id: 15, title: '15. CANDI HUAY PLA KANG', url: BASE_URL + 'indonesian/15.templo_huay_pla_kang_id.mp3' },
+                { id: 16, title: '16. SALAM PENUTUP', url: BASE_URL + 'indonesian/16.saludo_final_id.mp3' }
+            ],
+            Italiano: [
+                { id: 1, title: '1. INTRODUZIONE – BENVENUTI', url: BASE_URL + 'italian/1.introduccion_bienvenida_it.mp3' },
+                { id: 2, title: '2. ARRIVO A CHIANG MAI | PORTA DEL NORD', url: BASE_URL + 'italian/2.llegada_chiang_mai_it.mp3' },
+                { id: 3, title: '3. CLIMA', url: BASE_URL + 'italian/3.clima_it.mp3' },
+                { id: 4, title: '4. L’IMPATTO DEL TURISMO NEL NORD DELLA THAILANDIA', url: BASE_URL + 'italian/4.impacto_turismo_norte_it.mp3' },
+                { id: 5, title: '5. STORIA DELLA THAILANDIA DEL NORD', url: BASE_URL + 'italian/5.historia_norte_it.mp3' },
+                { id: 6, title: '6. LA LINGUA DEL NORD: KHAM MUEANG', url: BASE_URL + 'italian/6.idioma_kham_mueang_it.mp3' },
+                { id: 7, title: '7. FILOSOFIA DELLA THAILANDIA DEL NORD', url: BASE_URL + 'italian/7.filosofia_norte_it.mp3' },
+                { id: 8, title: '8. STILI DI VITA E COSTUMI DELLA THAILANDIA DEL NORD', url: BASE_URL + 'italian/8.costumbres_vida_norte_it.mp3' },
+                { id: 9, title: '9. MONACI, FEDE E CREDENZE NEL NORD', url: BASE_URL + 'italian/9.monjes_fe_creencias_it.mp3' },
+                { id: 10, title: '10. GASTRONOMIA', url: BASE_URL + 'italian/10.gastronomia_it.mp3' },
+                { id: 11, title: '11. SORGENTI TERMALI DI MAE KACHAN', url: BASE_URL + 'italian/11.aguas_termales_mae_kachan_it.mp3' },
+                { id: 12, title: '12. TRIBÙ COLLINARE DI MAE KACHAN', url: BASE_URL + 'italian/12.tribu_montanesa_mae_kachan_it.mp3' },
+                { id: 13, title: '13. TEMPIO BIANCO WAT RONG KHUN', url: BASE_URL + 'italian/13.templo_blanco_wat_rong_khun_it.mp3' },
+                { id: 14, title: '14. TEMPIO AZZURRO WAT RONG SUEA TEN', url: BASE_URL + 'italian/14.templo_azul_wat_rong_suea_ten_it.mp3' },
+                { id: 15, title: '15. TEMPIO HUAY PLA KANG', url: BASE_URL + 'italian/15.templo_huay_pla_kang_it.mp3' },
+                { id: 16, title: '16. SALUTO FINALE', url: BASE_URL + 'italian/16.saludo_final_it.mp3' }
+            ],
+            日本語: [
+                { id: 1, title: '1. はじめに – ようこそ', url: BASE_URL + 'japanese/1.introduccion_bienvenida_jp.mp3' },
+                { id: 2, title: '2. チェンマイへの到着 | 北部への門', url: BASE_URL + 'japanese/2.llegada_chiang_mai_jp.mp3' },
+                { id: 3, title: '3. 気候', url: BASE_URL + 'japanese/3.clima_jp.mp3' },
+                { id: 4, title: '4. タイ北部における観光の影響', url: BASE_URL + 'japanese/4.impacto_turismo_norte_jp.mp3' },
+                { id: 5, title: '5. タイ北部の歴史', url: BASE_URL + 'japanese/5.historia_norte_jp.mp3' },
+                { id: 6, title: '6. 北部の言語：カムムアン', url: BASE_URL + 'japanese/6.idioma_kham_mueang_jp.mp3' },
+                { id: 7, title: '7. タイ北部の哲学', url: BASE_URL + 'japanese/7.filosofia_norte_jp.mp3' },
+                { id: 8, title: '8. タイ北部のライフスタイルと習慣', url: BASE_URL + 'japanese/8.costumbres_vida_norte_jp.mp3' },
+                { id: 9, title: '9. 北部の僧侶、信仰、そして教え', url: BASE_URL + 'japanese/9.monjes_fe_creencias_jp.mp3' },
+                { id: 10, title: '10. グルメ (ガストロノミー)', url: BASE_URL + 'japanese/10.gastronomia_jp.mp3' },
+                { id: 11, title: '11. メーカチャン温泉', url: BASE_URL + 'japanese/11.aguas_termales_mae_kachan_jp.mp3' },
+                { id: 12, title: '12. メーカチャンの山岳民族', url: BASE_URL + 'japanese/12.tribu_montanesa_mae_kachan_jp.mp3' },
+                { id: 13, title: '13. ホワイトテンプル (ワット・ロンクン)', url: BASE_URL + 'japanese/13.templo_blanco_wat_rong_khun_jp.mp3' },
+                { id: 14, title: '14. ブルーテンプル (ワット・ロンスアテン)', url: BASE_URL + 'japanese/14.templo_azul_wat_rong_suea_ten_jp.mp3' },
+                { id: 15, title: '15. ワット・フ아이・プラー・カン', url: BASE_URL + 'japanese/15.templo_huay_pla_kang_jp.mp3' },
+                { id: 16, title: '16. おわりに (終わりの挨拶)', url: BASE_URL + 'japanese/16.saludo_final_jp.mp3' }
+            ],
+            한국어: [
+                { id: 1, title: '1. 서론 – 환영합니다', url: BASE_URL + 'korean/1.introduccion_bienvenida_ko.mp3' },
+                { id: 2, title: '2. 치앙마이 도착 | 북부의 관문', url: BASE_URL + 'korean/2.llegada_chiang_mai_ko.mp3' },
+                { id: 3, title: '3. 기후', url: BASE_URL + 'korean/3.clima_ko.mp3' },
+                { id: 4, title: '4. 태국 북부 관광의 영향', url: BASE_URL + 'korean/4.impacto_turismo_norte_ko.mp3' },
+                { id: 5, title: '5. 태국 북부의 역사', url: BASE_URL + 'korean/5.historia_norte_ko.mp3' },
+                { id: 6, title: '6. 북부의 언어: 캄므앙', url: BASE_URL + 'korean/6.idioma_kham_mueang_ko.mp3' },
+                { id: 7, title: '7. 태국 북부의 철학', url: BASE_URL + 'korean/7.filosofia_norte_ko.mp3' },
+                { id: 8, title: '8. 태국 북부의 생활 방식과 관습', url: BASE_URL + 'korean/8.costumbres_vida_norte_ko.mp3' },
+                { id: 9, title: '9. 북부의 스님, 신앙 그리고 믿음', url: BASE_URL + 'korean/9.monjes_fe_creencias_ko.mp3' },
+                { id: 10, title: '10. 미식 (가스트로노미)', url: BASE_URL + 'korean/10.gastronomia_ko.mp3' },
+                { id: 11, title: '11. 매카찬 온천', url: BASE_URL + 'korean/11.aguas_termales_mae_kachan_ko.mp3' },
+                { id: 12, title: '12. 매카찬 고산족', url: BASE_URL + 'korean/12.tribu_montanesa_mae_kachan_ko.mp3' },
+                { id: 13, title: '13. 화이트 템플 (왓 롱 쿤)', url: BASE_URL + 'korean/13.templo_blanco_wat_rong_khun_ko.mp3' },
+                { id: 14, title: '14. 블루 템플 (왓 롱 쓰아 텐)', url: BASE_URL + 'korean/14.templo_azul_wat_rong_suea_ten_ko.mp3' },
+                { id: 15, title: '15. 후아이 플라 캉 사원', url: BASE_URL + 'korean/15.templo_huay_pla_kang_ko.mp3' },
+                { id: 16, title: '16. 맺음말 (마지막 인사)', url: BASE_URL + 'korean/16.saludo_final_ko.mp3' }
+            ],
+            Bahasa_Melayu: [
+                { id: 1, title: '1. PENGENALAN – SELAMAT DATANG', url: BASE_URL + 'malay/1.introduccion_bienvenida_ms.mp3' },
+                { id: 2, title: '2. TIBA DI CHIANG MAI | PINTU GERBANG UTARA', url: BASE_URL + 'malay/2.llegada_chiang_mai_ms.mp3' },
+                { id: 3, title: '3. IKLIM', url: BASE_URL + 'malay/3.clima_ms.mp3' },
+                { id: 4, title: '4. KESAN PELANCONGAN DI UTARA THAILAND', url: BASE_URL + 'malay/4.impacto_turismo_norte_ms.mp3' },
+                { id: 5, title: '5. SEJARAH UTARA THAILAND', url: BASE_URL + 'malay/5.historia_norte_ms.mp3' },
+                { id: 6, title: '6. BAHASA UTARA: KHAM MUEANG', url: BASE_URL + 'malay/6.idioma_kham_mueang_ms.mp3' },
+                { id: 7, title: '7. FALSAFAH UTARA THAILAND', url: BASE_URL + 'malay/7.filosofia_norte_ms.mp3' },
+                { id: 8, title: '8. GAYA HIDUP DAN ADAT RESAM UTARA THAILAND', url: BASE_URL + 'malay/8.costumbres_vida_norte_ms.mp3' },
+                { id: 9, title: '9. SAMUDA, IMAN DAN KEPERCAYAAN DI UTARA', url: BASE_URL + 'malay/9.monjes_fe_creencias_ms.mp3' },
+                { id: 10, title: '10. GASTRONOMI', url: BASE_URL + 'malay/10.gastronomia_ms.mp3' },
+                { id: 11, title: '11. KOLAM AIR PANAS MAE KACHAN', url: BASE_URL + 'malay/11.aguas_termales_mae_kachan_ms.mp3' },
+                { id: 12, title: '12. SUKU KAUM BUKIT MAE KACHAN', url: BASE_URL + 'malay/12.tribu_montanesa_mae_kachan_ms.mp3' },
+                { id: 13, title: '13. TOKONG PUTIH WAT RONG KHUN', url: BASE_URL + 'malay/13.templo_blanco_wat_rong_khun_ms.mp3' },
+                { id: 14, title: '14. TOKONG BIRU WAT RONG SUEA TEN', url: BASE_URL + 'malay/14.templo_azul_wat_rong_suea_ten_ms.mp3' },
+                { id: 15, title: '15. TOKONG HUAY PLA KANG', url: BASE_URL + 'malay/15.templo_huay_pla_kang_ms.mp3' },
+                { id: 16, title: '16. UCAPAN PENUTUP', url: BASE_URL + 'malay/16.saludo_final_ms.mp3' }
+            ],
+            Norsk: [
+                { id: 1, title: '1. Introduksjon – Velkommen', url: BASE_URL + 'norwegian/1.introduccion_bienvenida_no.mp3' },
+                { id: 2, title: '2. Ankomst i Chiang Mai | Porten til nord', url: BASE_URL + 'norwegian/2.llegada_chiang_mai_no.mp3' },
+                { id: 3, title: '3. Klima', url: BASE_URL + 'norwegian/3.clima_no.mp3' },
+                { id: 4, title: '4. Turismens påvirkning i Nord-Thailand', url: BASE_URL + 'norwegian/4.impacto_turismo_norte_no.mp3' },
+                { id: 5, title: '5. Nord-Thailands historie', url: BASE_URL + 'norwegian/5.historia_norte_no.mp3' },
+                { id: 6, title: '6. Språket i nord: Kham Mueang', url: BASE_URL + 'norwegian/6.idioma_kham_mueang_no.mp3' },
+                { id: 7, title: '7. Nord-Thailands filosofi', url: BASE_URL + 'norwegian/7.filosofia_norte_no.mp3' },
+                { id: 8, title: '8. Livsstil og skikker i nord', url: BASE_URL + 'norwegian/8.costumbres_vida_norte_no.mp3' },
+                { id: 9, title: '9. Munker, tro og religiøse overbevisninger i nord', url: BASE_URL + 'norwegian/9.monjes_fe_creencias_no.mp3' },
+                { id: 10, title: '10. Gastronomi', url: BASE_URL + 'norwegian/10.gastronomia_no.mp3' },
+                { id: 11, title: '11. Mae Kachan varme kilder', url: BASE_URL + 'norwegian/11.aguas_termales_mae_kachan_no.mp3' },
+                { id: 12, title: '12. Fjellstammene i Mae Kachan', url: BASE_URL + 'norwegian/12.tribu_montanesa_mae_kachan_no.mp3' },
+                { id: 13, title: '13. Det hvite tempelet: Wat Rong Khun', url: BASE_URL + 'norwegian/13.templo_blanco_wat_rong_khun_no.mp3' },
+                { id: 14, title: '14. Det blå tempelet: Wat Rong Suea Ten', url: BASE_URL + 'norwegian/14.templo_azul_wat_rong_suea_ten_no.mp3' },
+                { id: 15, title: '15. Huay Pla Kang-tempelet', url: BASE_URL + 'norwegian/15.templo_huay_pla_kang_no.mp3' },
+                { id: 16, title: '16. Avsluttende hilsen', url: BASE_URL + 'norwegian/16.saludo_final_no.mp3' }
+            ],
+            فارسی: [
+                { id: 1, title: '۱. مقدمه – خوش‌آمدگویی', url: BASE_URL + 'persian/1.introduccion_bienvenida_fa.mp3' },
+                { id: 2, title: '۲. ورود به چیانگ مای | دروازه شمال', url: BASE_URL + 'persian/2.llegada_chiang_mai_fa.mp3' },
+                { id: 3, title: '۳. آب و هوا', url: BASE_URL + 'persian/3.clima_fa.mp3' },
+                { id: 4, title: '۴. تأثیر گردشگری در شمال تایلند', url: BASE_URL + 'persian/4.impacto_turismo_norte_fa.mp3' },
+                { id: 5, title: '۵. تاریخ شمال تایلند', url: BASE_URL + 'persian/5.historia_norte_fa.mp3' },
+                { id: 6, title: '۶. زبان شمال: خام موانگ', url: BASE_URL + 'persian/6.idioma_kham_mueang_fa.mp3' },
+                { id: 7, title: '۷. فلسفه شمال تایلند', url: BASE_URL + 'persian/7.filosofia_norte_fa.mp3' },
+                { id: 8, title: '۸. سبک زندگی و آداب و رسوم شمال', url: BASE_URL + 'persian/8.costumbres_vida_norte_fa.mp3' },
+                { id: 9, title: '۹. راهبان، ایمان و باورهای مذهبی در شمال', url: BASE_URL + 'persian/9.monjes_fe_creencias_fa.mp3' },
+                { id: 10, title: '۱۰. هنر آشپزی', url: BASE_URL + 'persian/10.gastronomia_fa.mp3' },
+                { id: 11, title: '۱۱. چشمه‌های آب گرم مائه کاچان', url: BASE_URL + 'persian/11.aguas_termales_mae_kachan_fa.mp3' },
+                { id: 12, title: '۱۲. قبایل کوهستانی مائه کاچان', url: BASE_URL + 'persian/12.tribu_montanesa_mae_kachan_fa.mp3' },
+                { id: 13, title: '۱۳. معبد سفید: وات رونگ خون', url: BASE_URL + 'persian/13.templo_blanco_wat_rong_khun_fa.mp3' },
+                { id: 14, title: '۱۴. معبد آبی: وات رونگ سوئه تن', url: BASE_URL + 'persian/14.templo_azul_wat_rong_suea_ten_fa.mp3' },
+                { id: 15, title: '۱۵. معبد هوآی پلا کانگ', url: BASE_URL + 'persian/15.templo_huay_pla_kang_fa.mp3' },
+                { id: 16, title: '۱۶. سخن پایانی و خداحافظی', url: BASE_URL + 'persian/16.saludo_final_fa.mp3' }
+            ],
+            Polski: [
+                { id: 1, title: '1. Wstęp – Witamy', url: BASE_URL + 'polish/1.introduccion_bienvenida_pl.mp3' },
+                { id: 2, title: '2. Przyjazd do Chiang Mai | Brama do Północy', url: BASE_URL + 'polish/2.llegada_chiang_mai_pl.mp3' },
+                { id: 3, title: '3. Klimat', url: BASE_URL + 'polish/3.clima_pl.mp3' },
+                { id: 4, title: '4. Wpływ turystyki w Północnej Tajlandii', url: BASE_URL + 'polish/4.impacto_turismo_norte_pl.mp3' },
+                { id: 5, title: '5. Historia Północnej Tajlandii', url: BASE_URL + 'polish/5.historia_norte_pl.mp3' },
+                { id: 6, title: '6. Język Północy: Kham Mueang', url: BASE_URL + 'polish/6.idioma_kham_mueang_pl.mp3' },
+                { id: 7, title: '7. Filozofia Północnej Tajlandii', url: BASE_URL + 'polish/7.filosofia_norte_pl.mp3' },
+                { id: 8, title: '8. Styl życia i zwyczaje Północy', url: BASE_URL + 'polish/8.costumbres_vida_norte_pl.mp3' },
+                { id: 9, title: '9. Mnisi, wiara i wierzenia religijne na Północy', url: BASE_URL + 'polish/9.monjes_fe_creencias_pl.mp3' },
+                { id: 10, title: '10. Gastronomia', url: BASE_URL + 'polish/10.gastronomia_pl.mp3' },
+                { id: 11, title: '11. Gorące źródła Mae Kachan', url: BASE_URL + 'polish/11.aguas_termales_mae_kachan_pl.mp3' },
+                { id: 12, title: '12. Górskie plemiona z Mae Kachan', url: BASE_URL + 'polish/12.tribu_montanesa_mae_kachan_pl.mp3' },
+                { id: 13, title: '13. Biała Świątynia: Wat Rong Khun', url: BASE_URL + 'polish/13.templo_blanco_wat_rong_khun_pl.mp3' },
+                { id: 14, title: '14. Błękitna Świątynia: Wat Rong Suea Ten', url: BASE_URL + 'polish/14.templo_azul_wat_rong_suea_ten_pl.mp3' },
+                { id: 15, title: '15. Świątynia Huay Pla Kang', url: BASE_URL + 'polish/15.templo_huay_pla_kang_pl.mp3' },
+                { id: 16, title: '16. Pożegnanie i zakończenie', url: BASE_URL + 'polish/16.saludo_final_pl.mp3' }
+            ],
+            Português: [
+                { id: 1, title: '1. Introdução – Bem-vindos', url: BASE_URL + 'portuguese/1.introduccion_bienvenida_pt.mp3' },
+                { id: 2, title: '2. Chegada a Chiang Mai | A Porta do Norte', url: BASE_URL + 'portuguese/2.llegada_chiang_mai_pt.mp3' },
+                { id: 3, title: '3. O Clima', url: BASE_URL + 'portuguese/3.clima_pt.mp3' },
+                { id: 4, title: '4. Impacto do turismo no norte da Tailândia', url: BASE_URL + 'portuguese/4.impacto_turismo_norte_pt.mp3' },
+                { id: 5, title: '5. História do norte da Tailândia', url: BASE_URL + 'portuguese/5.historia_norte_pt.mp3' },
+                { id: 6, title: '6. O idioma do norte: Kham Mueang', url: BASE_URL + 'portuguese/6.idioma_kham_mueang_pt.mp3' },
+                { id: 7, title: '7. Filosofia do norte da Tailândia', url: BASE_URL + 'portuguese/7.filosofia_norte_pt.mp3' },
+                { id: 8, title: '8. Estilo de vida e costumes do norte', url: BASE_URL + 'portuguese/8.costumbres_vida_norte_pt.mp3' },
+                { id: 9, title: '9. Monges, fé e crenças religiosas no norte', url: BASE_URL + 'portuguese/9.monjes_fe_creencias_pt.mp3' },
+                { id: 10, title: '10. Gastronomia', url: BASE_URL + 'portuguese/10.gastronomia_pt.mp3' },
+                { id: 11, title: '11. Fontes termais de Mae Kachan', url: BASE_URL + 'portuguese/11.aguas_termales_mae_kachan_pt.mp3' },
+                { id: 12, title: '12. Tribos das montanhas de Mae Kachan', url: BASE_URL + 'portuguese/12.tribu_montanesa_mae_kachan_pt.mp3' },
+                { id: 13, title: '13. O Templo Branco: Wat Rong Khun', url: BASE_URL + 'portuguese/13.templo_blanco_wat_rong_khun_pt.mp3' },
+                { id: 14, title: '14. O Templo Azul: Wat Rong Suea Ten', url: BASE_URL + 'portuguese/14.templo_azul_wat_rong_suea_ten_pt.mp3' },
+                { id: 15, title: '15. Templo Huay Pla Kang', url: BASE_URL + 'portuguese/15.templo_huay_pla_kang_pt.mp3' },
+                { id: 16, title: '16. Saudação final', url: BASE_URL + 'portuguese/16.saludo_final_pt.mp3' }
+            ],
+            Русский: [
+                { id: 1, title: '1. Введение — Добро пожаловать', url: BASE_URL + 'russian/1.introduccion_bienvenida_ru.mp3' },
+                { id: 2, title: '2. Прибытие в Чиангмай | Ворота Севера', url: BASE_URL + 'russian/2.llegada_chiang_mai_ru.mp3' },
+                { id: 3, title: '3. Климат', url: BASE_URL + 'russian/3.clima_ru.mp3' },
+                { id: 4, title: '4. Влияние туризма на Северный Таиланд', url: BASE_URL + 'russian/4.impacto_turismo_norte_ru.mp3' },
+                { id: 5, title: '5. История Северного Таиланда', url: BASE_URL + 'russian/5.historia_norte_ru.mp3' },
+                { id: 6, title: '6. Язык Севера: Кхам-мыанг', url: BASE_URL + 'russian/6.idioma_kham_mueang_ru.mp3' },
+                { id: 7, title: '7. Философия Северного Таиланда', url: BASE_URL + 'russian/7.filosofia_norte_ru.mp3' },
+                { id: 8, title: '8. Образ жизни и обычаи Севера', url: BASE_URL + 'russian/8.costumbres_vida_norte_ru.mp3' },
+                { id: 9, title: '9. Монахи, вера и религиозные убеждения на Севере', url: BASE_URL + 'russian/9.monjes_fe_creencias_ru.mp3' },
+                { id: 10, title: '10. Гастрономия', url: BASE_URL + 'russian/10.gastronomia_ru.mp3' },
+                { id: 11, title: '11. Горячие источники Мае Качан', url: BASE_URL + 'russian/11.aguas_termales_mae_kachan_ru.mp3' },
+                { id: 12, title: '12. Горные племена Мае Качан', url: BASE_URL + 'russian/12.tribu_montanesa_mae_kachan_ru.mp3' },
+                { id: 13, title: '13. Белый храм: Ват Ронг Кхун', url: BASE_URL + 'russian/13.templo_blanco_wat_rong_khun_ru.mp3' },
+                { id: 14, title: '14. Голубой храм: Ват Ронг Суа Тен', url: BASE_URL + 'russian/14.templo_azul_wat_rong_suea_ten_ru.mp3' },
+                { id: 15, title: '15. Храм Хуай Пла Канг', url: BASE_URL + 'russian/15.templo_huay_pla_kang_ru.mp3' },
+                { id: 16, title: '16. Заключительное приветствие', url: BASE_URL + 'russian/16.saludo_final_ru.mp3' }
+            ],
+            中文: [
+                { id: 1, title: '1. 简介 — 欢迎', url: BASE_URL + 'chinese/1.introduccion_bienvenida_zh.mp3' },
+                { id: 2, title: '2. 抵达清迈 | 北方之门', url: BASE_URL + 'chinese/2.llegada_chiang_mai_zh.mp3' },
+                { id: 3, title: '3. 气候', url: BASE_URL + 'chinese/3.clima_zh.mp3' },
+                { id: 4, title: '4. 旅游业对泰北的影响', url: BASE_URL + 'chinese/4.impacto_turismo_norte_zh.mp3' },
+                { id: 5, title: '5. 泰北历史', url: BASE_URL + 'chinese/5.historia_norte_zh.mp3' },
+                { id: 6, title: '6. 北方语言：甘蒙语 (Kham Mueang)', url: BASE_URL + 'chinese/6.idioma_kham_mueang_zh.mp3' },
+                { id: 7, title: '7. 泰北哲学', url: BASE_URL + 'chinese/7.filosofia_norte_zh.mp3' },
+                { id: 8, title: '8. 北方的生活方式与习俗', url: BASE_URL + 'chinese/8.costumbres_vida_norte_zh.mp3' },
+                { id: 9, title: '9. 北方的僧侣、信仰与宗教观念', url: BASE_URL + 'chinese/9.monjes_fe_creencias_zh.mp3' },
+                { id: 10, title: '10. 美食', url: BASE_URL + 'chinese/10.gastronomia_zh.mp3' },
+                { id: 11, title: '11. 美卡占温泉', url: BASE_URL + 'chinese/11.aguas_termales_mae_kachan_zh.mp3' },
+                { id: 12, title: '12. 美卡占的山地部落', url: BASE_URL + 'chinese/12.tribu_montanesa_mae_kachan_zh.mp3' },
+                { id: 13, title: '13. 白庙：灵光寺 (Wat Rong Khun)', url: BASE_URL + 'chinese/13.templo_blanco_wat_rong_khun_zh.mp3' },
+                { id: 14, title: '14. 蓝庙：舞虎寺 (Wat Rong Suea Ten)', url: BASE_URL + 'chinese/14.templo_azul_wat_rong_suea_ten_zh.mp3' },
+                { id: 15, title: '15. 汇巴康寺 (Wat Huay Pla Kang)', url: BASE_URL + 'chinese/15.templo_huay_pla_kang_zh.mp3' },
+                { id: 16, title: '16. 结语', url: BASE_URL + 'chinese/16.saludo_final_zh.mp3' }
+            ],
+            繁體中文: [
+                { id: 1, title: '1. 簡介 — 歡迎', url: BASE_URL + 'chinese_tw/1.introduccion_bienvenida_tw.mp3' },
+                { id: 2, title: '2. 抵達清邁 | 北方之門', url: BASE_URL + 'chinese_tw/2.llegada_chiang_mai_tw.mp3' },
+                { id: 3, title: '3. 氣候', url: BASE_URL + 'chinese_tw/3.clima_tw.mp3' },
+                { id: 4, title: '4. 觀光業對泰北的影響', url: BASE_URL + 'chinese_tw/4.impacto_turismo_norte_tw.mp3' },
+                { id: 5, title: '5. 泰北歷史', url: BASE_URL + 'chinese_tw/5.historia_norte_tw.mp3' },
+                { id: 6, title: '6. 北方語言：甘蒙語 (Kham Mueang)', url: BASE_URL + 'chinese_tw/6.idioma_kham_mueang_tw.mp3' },
+                { id: 7, title: '7. 泰北哲學', url: BASE_URL + 'chinese_tw/7.filosofia_norte_tw.mp3' },
+                { id: 8, title: '8. 北方的生活方式與習俗', url: BASE_URL + 'chinese_tw/8.costumbres_vida_norte_tw.mp3' },
+                { id: 9, title: '9. 北方的僧侶、信仰與宗教觀念', url: BASE_URL + 'chinese_tw/9.monjes_fe_creencias_tw.mp3' },
+                { id: 10, title: '10. 美食', url: BASE_URL + 'chinese_tw/10.gastronomia_tw.mp3' },
+                { id: 11, title: '11. 美卡占溫泉', url: BASE_URL + 'chinese_tw/11.aguas_termales_mae_kachan_tw.mp3' },
+                { id: 12, title: '12. 美卡占的山地部落', url: BASE_URL + 'chinese_tw/12.tribu_montanesa_mae_kachan_tw.mp3' },
+                { id: 13, title: '13. 白廟：龍昆寺 (Wat Rong Khun)', url: BASE_URL + 'chinese_tw/13.templo_blanco_wat_rong_khun_tw.mp3' },
+                { id: 14, title: '14. 藍廟：舞虎寺 (Wat Rong Suea Ten)', url: BASE_URL + 'chinese_tw/14.templo_azul_wat_rong_suea_ten_tw.mp3' },
+                { id: 15, title: '15. 匯巴康寺 (Wat Huay Pla Kang)', url: BASE_URL + 'chinese_tw/15.templo_huay_pla_kang_tw.mp3' },
+                { id: 16, title: '16. 結語', url: BASE_URL + 'chinese_tw/16.saludo_final_tw.mp3' }
+            ],
+            Svenska: [
+                { id: 1, title: '1. Introduktion — Välkommen', url: BASE_URL + 'swedish/1.introduccion_bienvenida_sv.mp3' },
+                { id: 2, title: '2. Ankomst till Chiang Mai | Nordens port', url: BASE_URL + 'swedish/2.llegada_chiang_mai_sv.mp3' },
+                { id: 3, title: '3. Klimat', url: BASE_URL + 'swedish/3.clima_sv.mp3' },
+                { id: 4, title: '4. Turismens inverkan på norra Thailand', url: BASE_URL + 'swedish/4.impacto_turismo_norte_sv.mp3' },
+                { id: 5, title: '5. Norra Thailands historia', url: BASE_URL + 'swedish/5.historia_norte_sv.mp3' },
+                { id: 6, title: '6. Nordens språk: Kham-mueang', url: BASE_URL + 'swedish/6.idioma_kham_mueang_sv.mp3' },
+                { id: 7, title: '7. Norra Thailands filosofi', url: BASE_URL + 'swedish/7.filosofia_norte_sv.mp3' },
+                { id: 8, title: '8. Nordens livsstil och seder', url: BASE_URL + 'swedish/8.costumbres_vida_norte_sv.mp3' },
+                { id: 9, title: '9. Munkar, tro och religiösa övertygelser i norr', url: BASE_URL + 'swedish/9.monjes_fe_creencias_sv.mp3' },
+                { id: 10, title: '10. Gastronomi', url: BASE_URL + 'swedish/10.gastronomia_sv.mp3' },
+                { id: 11, title: '11. Mae Kachans varma källor', url: BASE_URL + 'swedish/11.aguas_termales_mae_kachan_sv.mp3' },
+                { id: 12, title: '12. Bergsstammar i Mae Kachan', url: BASE_URL + 'swedish/12.tribu_montanesa_mae_kachan_sv.mp3' },
+                { id: 13, title: '13. Vita templet: Wat Rong Khun', url: BASE_URL + 'swedish/13.templo_blanco_wat_rong_khun_sv.mp3' },
+                { id: 14, title: '14. Blå templet: Wat Rong Suea Ten', url: BASE_URL + 'swedish/14.templo_azul_wat_rong_suea_ten_sv.mp3' },
+                { id: 15, title: '15. Huay Pla Kang-templet', url: BASE_URL + 'swedish/15.templo_huay_pla_kang_sv.mp3' },
+                { id: 16, title: '16. Avslutande hälsning', url: BASE_URL + 'swedish/16.saludo_final_sv.mp3' }
+            ],
+            ไทย: [
+                { id: 1, title: '1. บทนำ — ยินดีต้อนรับ', url: BASE_URL + 'thai/1.introduccion_bienvenida_th.mp3' },
+                { id: 2, title: '2. เดินทางถึงเชียงใหม่ | ประตูสู่ทิศเหนือ', url: BASE_URL + 'thai/2.llegada_chiang_mai_th.mp3' },
+                { id: 3, title: '3. สภาพอากาศ', url: BASE_URL + 'thai/3.clima_th.mp3' },
+                { id: 4, title: '4. ผลกระทบของการท่องเที่ยวต่อภาคเหนือของไทย', url: BASE_URL + 'thai/4.impacto_turismo_norte_th.mp3' },
+                { id: 5, title: '5. ประวัติศาสตร์ภาคเหนือของไทย', url: BASE_URL + 'thai/5.historia_norte_th.mp3' },
+                { id: 6, title: '6. ภาษาเหนือ: คำเมือง', url: BASE_URL + 'thai/6.idioma_kham_mueang_th.mp3' },
+                { id: 7, title: '7. ปรัชญาของภาคเหนือ', url: BASE_URL + 'thai/7.filosofia_norte_th.mp3' },
+                { id: 8, title: '8. วิถีชีวิตและขนบธรรมเนียมของชาวเหนือ', url: BASE_URL + 'thai/8.costumbres_vida_norte_th.mp3' },
+                { id: 9, title: '9. พระสงฆ์ ความเชื่อ และศาสนาในภาคเหนือ', url: BASE_URL + 'thai/9.monjes_fe_creencias_th.mp3' },
+                { id: 10, title: '10. อาหารและวัฒนธรรมการกิน', url: BASE_URL + 'thai/10.gastronomia_th.mp3' },
+                { id: 11, title: '11. น้ำพุร้อนแม่ขะจาน', url: BASE_URL + 'thai/11.aguas_termales_mae_kachan_th.mp3' },
+                { id: 12, title: '12. หมู่บ้านชาวเขาแม่ขะจาน', url: BASE_URL + 'thai/12.tribu_montanesa_mae_kachan_th.mp3' },
+                { id: 13, title: '13. วัดร่องขุ่น (วัดขาว)', url: BASE_URL + 'thai/13.templo_blanco_wat_rong_khun_th.mp3' },
+                { id: 14, title: '14. วัดร่องเสือเต้น (วัดน้ำเงิน)', url: BASE_URL + 'thai/14.templo_azul_wat_rong_suea_ten_th.mp3' },
+                { id: 15, title: '15. วัดห้วยปลากั้ง', url: BASE_URL + 'thai/15.templo_huay_pla_kang_th.mp3' },
+                { id: 16, title: '16. คำกล่าวปิดท้าย', url: BASE_URL + 'thai/16.saludo_final_th.mp3' }
+            ],
+            தமிழ்: [
+                { id: 1, title: '1. அறிமுகம் — வரவேற்கிறோம்', url: BASE_URL + 'tamil/1.introduccion_bienvenida_ta.mp3' },
+                { id: 2, title: '2. சியாங் மாய் வருகை | வடக்கின் நுழைவாயில்', url: BASE_URL + 'tamil/2.llegada_chiang_mai_ta.mp3' },
+                { id: 3, title: '3. காலநிலை', url: BASE_URL + 'tamil/3.clima_ta.mp3' },
+                { id: 4, title: '4. வடக்கு தாய்லாந்தில் சுற்றுலாவின் தாக்கம்', url: BASE_URL + 'tamil/4.impacto_turismo_norte_ta.mp3' },
+                { id: 5, title: '5. வடக்கு தாய்லாந்தின் வரலாறு', url: BASE_URL + 'tamil/5.historia_norte_ta.mp3' },
+                { id: 6, title: '6. வடக்கின் மொழி: காம்-முயுவாங்', url: BASE_URL + 'tamil/6.idioma_kham_mueang_ta.mp3' },
+                { id: 7, title: '7. வடக்கு தாய்லாந்தின் தத்துவம்', url: BASE_URL + 'tamil/7.filosofia_norte_ta.mp3' },
+                { id: 8, title: '8. வடக்கின் வாழ்க்கை முறை மற்றும் பழக்கவழக்கங்கள்', url: BASE_URL + 'tamil/8.costumbres_vida_norte_ta.mp3' },
+                { id: 9, title: '9. வடக்கில் துறவிகள், நம்பிக்கை மற்றும் மத நம்பிக்கைகள்', url: BASE_URL + 'tamil/9.monjes_fe_creencias_ta.mp3' },
+                { id: 10, title: '10. காஸ்ட்ரோனமி (உணவு முறை)', url: BASE_URL + 'tamil/10.gastronomia_ta.mp3' },
+                { id: 11, title: '11. மே கச்சான் வெந்நீர் ஊற்றுகள்', url: BASE_URL + 'tamil/11.aguas_termales_mae_kachan_ta.mp3' },
+                { id: 12, title: '12. மே கச்சான் மலைவாழ் பழங்குடியினர்', url: BASE_URL + 'tamil/12.tribu_montanesa_mae_kachan_ta.mp3' },
+                { id: 13, title: '13. வெள்ளை மசூதி: வாட் ரோங் குன்', url: BASE_URL + 'tamil/13.templo_blanco_wat_rong_khun_ta.mp3' },
+                { id: 14, title: '14. நீல மசூதி: வாட் ரோங் சூய டேன்', url: BASE_URL + 'tamil/14.templo_azul_wat_rong_suea_ten_ta.mp3' },
+                { id: 15, title: '15. ஹுவாய் பிளா காங் கோவில்', url: BASE_URL + 'tamil/15.templo_huay_pla_kang_ta.mp3' },
+                { id: 16, title: '16. முடிவுரை', url: BASE_URL + 'tamil/16.saludo_final_ta.mp3' }
+            ],
+            Kiswahili: [
+                { id: 1, title: '1. Utangulizi – Karibu', url: BASE_URL + 'swahili/1.introduccion_bienvenida_sw.mp3' },
+                { id: 2, title: '2. Kuwasili Chiang Mai | Mlango wa Kaskazini', url: BASE_URL + 'swahili/2.llegada_chiang_mai_sw.mp3' },
+                { id: 3, title: '3. Hali ya Hewa', url: BASE_URL + 'swahili/3.clima_sw.mp3' },
+                { id: 4, title: '4. Athari ya utalii Kaskazini mwa Thailand', url: BASE_URL + 'swahili/4.impacto_turismo_norte_sw.mp3' },
+                { id: 5, title: '5. Historia ya Kaskazini mwa Thailand', url: BASE_URL + 'swahili/5.historia_norte_sw.mp3' },
+                { id: 6, title: '6. Lugha ya Kaskazini: Kham Mueang', url: BASE_URL + 'swahili/6.idioma_kham_mueang_sw.mp3' },
+                { id: 7, title: '7. Falsafa ya Kaskazini mwa Thailand', url: BASE_URL + 'swahili/7.filosofia_norte_sw.mp3' },
+                { id: 8, title: '8. Mtindo wa maisha na mila za Kaskazini', url: BASE_URL + 'swahili/8.costumbres_vida_norte_sw.mp3' },
+                { id: 9, title: '9. Watawa, imani na mitazamo ya kidini Kaskazini', url: BASE_URL + 'swahili/9.monjes_fe_creencias_sw.mp3' },
+                { id: 10, title: '10. Gastronomia', url: BASE_URL + 'swahili/10.gastronomia_sw.mp3' },
+                { id: 11, title: '11. Chemchemi za maji moto za Mae Kachan', url: BASE_URL + 'swahili/11.aguas_termales_mae_kachan_sw.mp3' },
+                { id: 12, title: '12. Makabila ya milimani ya Mae Kachan', url: BASE_URL + 'swahili/12.tribu_montanesa_mae_kachan_sw.mp3' },
+                { id: 13, title: '13. Hekalu Nyeupe: Wat Rong Khun', url: BASE_URL + 'swahili/13.templo_blanco_wat_rong_khun_sw.mp3' },
+                { id: 14, title: '14. Hekalu la Bluu: Wat Rong Suea Ten', url: BASE_URL + 'swahili/14.templo_azul_wat_rong_suea_ten_sw.mp3' },
+                { id: 15, title: '15. Hekalu la Huay Pla Kang', url: BASE_URL + 'swahili/15.templo_huay_pla_kang_sw.mp3' },
+                { id: 16, title: '16. Salamu za kufunga', url: BASE_URL + 'swahili/c.mp3' }
+            ],
+            Türkçe: [
+                { id: 1, title: '1. Giriş – Hoş Geldiniz', url: BASE_URL + 'turkish/1.introduccion_bienvenida_tr.mp3' },
+                { id: 2, title: '2. Chiang Mai’ye Varış | Kuzeyin Kapısı', url: BASE_URL + 'turkish/2.llegada_chiang_mai_tr.mp3' },
+                { id: 3, title: '3. İklim', url: BASE_URL + 'turkish/3.clima_tr.mp3' },
+                { id: 4, title: '4. Kuzey Tayland’da Turizmin Etkisi', url: BASE_URL + 'turkish/4.impacto_turismo_norte_tr.mp3' },
+                { id: 5, title: '5. Kuzey Tayland Tarihi', url: BASE_URL + 'turkish/5.historia_norte_tr.mp3' },
+                { id: 6, title: '6. Kuzey Dili: Kham Mueang', url: BASE_URL + 'turkish/6.idioma_kham_mueang_tr.mp3' },
+                { id: 7, title: '7. Kuzey Tayland Felsefesi', url: BASE_URL + 'turkish/7.filosofia_norte_tr.mp3' },
+                { id: 8, title: '8. Kuzeyin Yaşam Tarzı ve Gelenekleri', url: BASE_URL + 'turkish/8.costumbres_vida_norte_tr.mp3' },
+                { id: 9, title: '9. Kuzeyde Rahipler, İnanç ve Dini İnanışlar', url: BASE_URL + 'turkish/9.monjes_fe_creencias_tr.mp3' },
+                { id: 10, title: '10. Gastronomi', url: BASE_URL + 'turkish/10.gastronomia_tr.mp3' },
+                { id: 11, title: '11. Mae Kachan Kaplıcaları', url: BASE_URL + 'turkish/11.aguas_termales_mae_kachan_tr.mp3' },
+                { id: 12, title: '12. Mae Kachan’ın Dağ Kabileleri', url: BASE_URL + 'turkish/12.tribu_montanesa_mae_kachan_tr.mp3' },
+                { id: 13, title: '13. Beyaz Tapınak: Wat Rong Khun', url: BASE_URL + 'turkish/13.templo_blanco_wat_rong_khun_tr.mp3' },
+                { id: 14, title: '14. Mavi Tapınak: Wat Rong Suea Ten', url: BASE_URL + 'turkish/14.templo_azul_wat_rong_suea_ten_tr.mp3' },
+                { id: 15, title: '15. Huay Pla Kang Tapınağı', url: BASE_URL + 'turkish/15.templo_huay_pla_kang_tr.mp3' },
+                { id: 16, title: '16. Kapanış ve Final Selamı', url: BASE_URL + 'turkish/16.saludo_final_tr.mp3' }
+            ],
+            Українська: [
+                { id: 1, title: '1. Вступ — Ласкаво просимо', url: BASE_URL + 'ukrainian/1.introduccion_bienvenida_uk.mp3' },
+                { id: 2, title: '2. Прибуття в Чіангмай | Ворота Півночі', url: BASE_URL + 'ukrainian/2.llegada_chiang_mai_uk.mp3' },
+                { id: 3, title: '3. Клімат', url: BASE_URL + 'ukrainian/3.clima_uk.mp3' },
+                { id: 4, title: '4. Вплив туризму в Північному Таїланді', url: BASE_URL + 'ukrainian/4.impacto_turismo_norte_uk.mp3' },
+                { id: 5, title: '5. Історія Північного Таїланду', url: BASE_URL + 'ukrainian/5.historia_norte_uk.mp3' },
+                { id: 6, title: '6. Мова Півночі: Кхам-муанг', url: BASE_URL + 'ukrainian/6.idioma_kham_mueang_uk.mp3' },
+                { id: 7, title: '7. Філософія Північного Таїланду', url: BASE_URL + 'ukrainian/7.filosofia_norte_uk.mp3' },
+                { id: 8, title: '8. Спосіб життя та звичаї Півночі', url: BASE_URL + 'ukrainian/8.costumbres_vida_norte_uk.mp3' },
+                { id: 9, title: '9. Ченці, віра та релігійні переконання на Півночі', url: BASE_URL + 'ukrainian/9.monjes_fe_creencias_uk.mp3' },
+                { id: 10, title: '10. Гастрономія', url: BASE_URL + 'ukrainian/10.gastronomia_uk.mp3' },
+                { id: 11, title: '11. Гарячі джерела Мае Качан', url: BASE_URL + 'ukrainian/11.aguas_termales_mae_kachan_uk.mp3' },
+                { id: 12, title: '12. Гірські племена Мае Качан', url: BASE_URL + 'ukrainian/12.tribu_montanesa_mae_kachan_uk.mp3' },
+                { id: 13, title: '13. Білий храм: Ват Ронг Кхун', url: BASE_URL + 'ukrainian/13.templo_blanco_wat_rong_khun_uk.mp3' },
+                { id: 14, title: '14. Блакитний храм: Ват Ронг Суа Тен', url: BASE_URL + 'ukrainian/14.templo_azul_wat_rong_suea_ten_uk.mp3' },
+                { id: 15, title: '15. Храм Хуай Пла Канг', url: BASE_URL + 'ukrainian/15.templo_huay_pla_kang_uk.mp3' },
+                { id: 16, title: '16. Заключне привітання', url: BASE_URL + 'ukrainian/16.saludo_final_uk.mp3' }
+            ],
+            اردو: [
+                { id: 1, title: '1. تعارف - خوش آمدید', url: BASE_URL + 'urdu/1.introduccion_bienvenida_ur.mp3' },
+                { id: 2, title: '2. چیانگ مائی میں آمد | شمال کا دروازہ', url: BASE_URL + 'urdu/2.llegada_chiang_mai_ur.mp3' },
+                { id: 3, title: '3. آب و ہوا', url: BASE_URL + 'urdu/3.clima_ur.mp3' },
+                { id: 4, title: '4. شمالی تھائی لینڈ میں سیاحت کے اثرات', url: BASE_URL + 'urdu/4.impacto_turismo_norte_ur.mp3' },
+                { id: 5, title: '5. شمالی تھائی لینڈ کی تاریخ', url: BASE_URL + 'urdu/5.historia_norte_ur.mp3' },
+                { id: 6, title: '6. شمال کی زبان: خام موانگ', url: BASE_URL + 'urdu/6.idioma_kham_mueang_ur.mp3' },
+                { id: 7, title: '7. شمالی تھائی لینڈ کا فلسفہ', url: BASE_URL + 'urdu/7.filosofia_norte_ur.mp3' },
+                { id: 8, title: '8. شمال کا طرزِ زندگی اور رسم و رواج', url: BASE_URL + 'urdu/8.costumbres_vida_norte_ur.mp3' },
+                { id: 9, title: '9. شمال میں راہب، ایمان اور مذہبی عقائد', url: BASE_URL + 'urdu/9.monjes_fe_creencias_ur.mp3' },
+                { id: 10, title: '10. کھانے پینے کی ثقافت', url: BASE_URL + 'urdu/10.gastronomia_ur.mp3' },
+                { id: 11, title: '11. مائے کاچان کے گرم چشمے', url: BASE_URL + 'urdu/11.aguas_termales_mae_kachan_ur.mp3' },
+                { id: 12, title: '12. مائے کاچان کے پہاڑی قبائل', url: BASE_URL + 'urdu/12.tribu_montanesa_mae_kachan_ur.mp3' },
+                { id: 13, title: '13. سفید مندر: واٹ رونگ کھون', url: BASE_URL + 'urdu/13.templo_blanco_wat_rong_khun_ur.mp3' },
+                { id: 14, title: '14. نیلا مندر: واٹ رونگ سوا ٹین', url: BASE_URL + 'urdu/14.templo_azul_wat_rong_suea_ten_ur.mp3' },
+                { id: 15, title: '15. ہوائے پلا کانگ مندر', url: BASE_URL + 'urdu/15.templo_huay_pla_kang_ur.mp3' },
+                { id: 16, title: '16. اختتامی کلمات', url: BASE_URL + 'urdu/16.saludo_final_ur.mp3' }
+            ],
+            Euskara: [
+                { id: 1, title: '1. Sarrera – Ongi etorri', url: BASE_URL + 'basque/1.introduccion_bienvenida_eu.mp3' },
+                { id: 2, title: '2. Iristea Chiang Maiera | Iparraldeko atea', url: BASE_URL + 'basque/2.llegada_chiang_mai_eu.mp3' },
+                { id: 3, title: '3. Klima', url: BASE_URL + 'basque/3.clima_eu.mp3' },
+                { id: 4, title: '4. Turismoaren eragina Thailandia iparraldean', url: BASE_URL + 'basque/4.impacto_turismo_norte_eu.mp3' },
+                { id: 5, title: '5. Thailandia iparraldeko historia', url: BASE_URL + 'basque/5.historia_norte_eu.mp3' },
+                { id: 6, title: '6. Iparraldeko hizkuntza: Kham Mueang', url: BASE_URL + 'basque/6.idioma_kham_mueang_eu.mp3' },
+                { id: 7, title: '7. Thailandia iparraldeko filosofia', url: BASE_URL + 'basque/7.filosofia_norte_eu.mp3' },
+                { id: 8, title: '8. Iparraldeko bizi-estiloa eta ohiturak', url: BASE_URL + 'basque/8.costumbres_vida_norte_eu.mp3' },
+                { id: 9, title: '9. Monjeak, fedea eta sinesmen erlijiosoak iparraldean', url: BASE_URL + 'basque/9.monjes_fe_creencias_eu.mp3' },
+                { id: 10, title: '10. Gastronomia', url: BASE_URL + 'basque/10.gastronomia_eu.mp3' },
+                { id: 11, title: '11. Mae Kachaneko ur termalak', url: BASE_URL + 'basque/11.aguas_termales_mae_kachan_eu.mp3' },
+                { id: 12, title: '12. Mae Kachaneko mendiko tribuak', url: BASE_URL + 'basque/12.tribu_montanesa_mae_kachan_eu.mp3' },
+                { id: 13, title: '13. Tenplu Zuria: Wat Rong Khun', url: BASE_URL + 'basque/13.templo_blanco_wat_rong_khun_eu.mp3' },
+                { id: 14, title: '14. Tenplu Urdina: Wat Rong Suea Ten', url: BASE_URL + 'basque/14.templo_azul_wat_rong_suea_ten_eu.mp3' },
+                { id: 15, title: '15. Huay Pla Kang tenplua', url: BASE_URL + 'basque/15.templo_huay_pla_kang_eu.mp3' },
+                { id: 16, title: '16. Agurra eta amaiera', url: BASE_URL + 'basque/16.saludo_final_eu.mp3' }
+            ],
+            Català: [
+                { id: 1, title: '1. Introducció – Benvinguda', url: BASE_URL + 'catalan/1.introduccion_bienvenida_ca.mp3' },
+                { id: 2, title: '2. Arribada a Chiang Mai | La porta del Nord', url: BASE_URL + 'catalan/2.llegada_chiang_mai_ca.mp3' },
+                { id: 3, title: '3. El clima', url: BASE_URL + 'catalan/3.clima_ca.mp3' },
+                { id: 4, title: '4. Impacte del turisme al nord de Tailàndia', url: BASE_URL + 'catalan/4.impacto_turismo_norte_ca.mp3' },
+                { id: 5, title: '5. Història del nord de Tailàndia', url: BASE_URL + 'catalan/5.historia_norte_ca.mp3' },
+                { id: 6, title: '6. L’idioma del nord: Kham Mueang', url: BASE_URL + 'catalan/6.idioma_kham_mueang_ca.mp3' },
+                { id: 7, title: '7. Filosofia del nord de Tailàndia', url: BASE_URL + 'catalan/7.filosofia_norte_ca.mp3' },
+                { id: 8, title: '8. Estil de vida i costums del nord', url: BASE_URL + 'catalan/8.costumbres_vida_norte_ca.mp3' },
+                { id: 9, title: '9. Monjos, fe i creences religioses al nord', url: BASE_URL + 'catalan/9.monjes_fe_creencias_ca.mp3' },
+                { id: 10, title: '10. Gastronomia', url: BASE_URL + 'catalan/10.gastronomia_ca.mp3' },
+                { id: 11, title: '11. Aigües termals de Mae Kachan', url: BASE_URL + 'catalan/11.aguas_termales_mae_kachan_ca.mp3' },
+                { id: 12, title: '12. Tribus de les muntanyes de Mae Kachan', url: BASE_URL + 'catalan/12.tribu_montanesa_mae_kachan_ca.mp3' },
+                { id: 13, title: '13. El Temple Blanc: Wat Rong Khun', url: BASE_URL + 'catalan/13.templo_blanco_wat_rong_khun_ca.mp3' },
+                { id: 14, title: '14. El Temple Blau: Wat Rong Suea Ten', url: BASE_URL + 'catalan/14.templo_azul_wat_rong_suea_ten_ca.mp3' },
+                { id: 15, title: '15. Temple Huay Pla Kang', url: BASE_URL + 'catalan/15.templo_huay_pla_kang_ca.mp3' },
+                { id: 16, title: '16. Comiat i salutació final', url: BASE_URL + 'catalan/16.saludo_final_ca.mp3' }
+            ],
+            Hrvatski: [
+                { id: 1, title: '1. Uvod – Dobro došli', url: BASE_URL + 'croatian/1.introduccion_bienvenida_hr.mp3' },
+                { id: 2, title: '2. Dolazak u Chiang Mai | Vrata sjevera', url: BASE_URL + 'croatian/2.llegada_chiang_mai_hr.mp3' },
+                { id: 3, title: '3. Klima', url: BASE_URL + 'croatian/3.clima_hr.mp3' },
+                { id: 4, title: '4. Utjecaj turizma u sjevernom Tajlandu', url: BASE_URL + 'croatian/4.impacto_turismo_norte_hr.mp3' },
+                { id: 5, title: '5. Povijest sjevernog Tajlanda', url: BASE_URL + 'croatian/5.historia_norte_hr.mp3' },
+                { id: 6, title: '6. Jezik sjevera: Kham Mueang', url: BASE_URL + 'croatian/6.idioma_kham_mueang_hr.mp3' },
+                { id: 7, title: '7. Filozofija sjevernog Tajlanda', url: BASE_URL + 'croatian/7.filosofia_norte_hr.mp3' },
+                { id: 8, title: '8. Način života i običaji sjevera', url: BASE_URL + 'croatian/8.costumbres_vida_norte_hr.mp3' },
+                { id: 9, title: '9. Redovnici, vjera i religijska uvjerenja na sjeveru', url: BASE_URL + 'croatian/9.monjes_fe_creencias_hr.mp3' },
+                { id: 10, title: '10. Gastronomija', url: BASE_URL + 'croatian/10.gastronomia_hr.mp3' },
+                { id: 11, title: '11. Termalni izvori Mae Kachan', url: BASE_URL + 'croatian/11.aguas_termales_mae_kachan_hr.mp3' },
+                { id: 12, title: '12. Planinska plemena Mae Kachana', url: BASE_URL + 'croatian/12.tribu_montanesa_mae_kachan_hr.mp3' },
+                { id: 13, title: '13. Bijeli hram: Wat Rong Khun', url: BASE_URL + 'croatian/13.templo_blanco_wat_rong_khun_hr.mp3' },
+                { id: 14, title: '14. Plavi hram: Wat Rong Suea Ten', url: BASE_URL + 'croatian/14.templo_azul_wat_rong_suea_ten_hr.mp3' },
+                { id: 15, title: '15. Hram Huay Pla Kang', url: BASE_URL + 'croatian/15.templo_huay_pla_kang_hr.mp3' },
+                { id: 16, title: '16. Oproštaj i završni pozdrav', url: BASE_URL + 'croatian/16.saludo_final_hr.mp3' }
+            ],
+            Galego: [
+                { id: 1, title: '1. Introdución – Benvidos', url: BASE_URL + 'galician/1.introduccion_bienvenida_gl.mp3' },
+                { id: 2, title: '2. Chegada a Chiang Mai | A porta do Norte', url: BASE_URL + 'galician/2.llegada_chiang_mai_gl.mp3' },
+                { id: 3, title: '3. O clima', url: BASE_URL + 'galician/3.clima_gl.mp3' },
+                { id: 4, title: '4. Impacto do turismo no norte de Tailandia', url: BASE_URL + 'galician/4.impacto_turismo_norte_gl.mp3' },
+                { id: 5, title: '5. Historia do norte de Tailandia', url: BASE_URL + 'galician/5.historia_norte_gl.mp3' },
+                { id: 6, title: '6. O idioma do norte: Kham Mueang', url: BASE_URL + 'galician/6.idioma_kham_mueang_gl.mp3' },
+                { id: 7, title: '7. Filosofía do norte de Tailandia', url: BASE_URL + 'galician/7.filosofia_norte_gl.mp3' },
+                { id: 8, title: '8. Estilo de vida e costumes do norte', url: BASE_URL + 'galician/8.costumbres_vida_norte_gl.mp3' },
+                { id: 9, title: '9. Monxes, fe e crenzas relixiosas no norte', url: BASE_URL + 'galician/9.monjes_fe_creencias_gl.mp3' },
+                { id: 10, title: '10. Gastronomía', url: BASE_URL + 'galician/10.gastronomia_gl.mp3' },
+                { id: 11, title: '11. Fontes termais de Mae Kachan', url: BASE_URL + 'galician/11.aguas_termales_mae_kachan_gl.mp3' },
+                { id: 12, title: '12. Tribos das montañas de Mae Kachan', url: BASE_URL + 'galician/12.tribu_montanesa_mae_kachan_gl.mp3' },
+                { id: 13, title: '13. O Templo Branco: Wat Rong Khun', url: BASE_URL + 'galician/13.templo_blanco_wat_rong_khun_gl.mp3' },
+                { id: 14, title: '14. O Templo Azul: Wat Rong Suea Ten', url: BASE_URL + 'galician/14.templo_azul_wat_rong_suea_ten_gl.mp3' },
+                { id: 15, title: '15. Templo Huay Pla Kang', url: BASE_URL + 'galician/15.templo_huay_pla_kang_gl.mp3' },
+                { id: 16, title: '16. Saúdo final e despedida', url: BASE_URL + 'galician/16.saludo_final_gl.mp3' }
+            ],
+            ភាสาខ្មែរ: [
+                { id: 1, title: '1. សេចក្តីផ្តើម – សូមស្វាគមន៍', url: BASE_URL + 'khmer/1.introduccion_bienvenida_km.mp3' },
+                { id: 2, title: '2. ការមកដល់ឈៀងម៉ៃ | ច្រកទ្វារទៅកាន់ភាគខាងជើង', url: BASE_URL + 'khmer/2.llegada_chiang_mai_km.mp3' },
+                { id: 3, title: '3. អាកាសធាតុ', url: BASE_URL + 'khmer/3.clima_km.mp3' },
+                { id: 4, title: '4. ឥទ្ធិពលនៃវិស័យទេសចរណ៍នៅភាគខាងជើងប្រទេសថៃ', url: BASE_URL + 'khmer/4.impacto_turismo_norte_km.mp3' },
+                { id: 5, title: '5. ប្រវត្តិសាស្ត្រភាគខាងជើងប្រទេសថៃ', url: BASE_URL + 'khmer/5.historia_norte_km.mp3' },
+                { id: 6, title: '6. ភាសាភាគខាងជើង៖ ខាំមឿង', url: BASE_URL + 'khmer/6.idioma_kham_mueang_km.mp3' },
+                { id: 7, title: '7. ទស្សនវិជ្ជាភាគខាងជើងប្រទេសថៃ', url: BASE_URL + 'khmer/7.filosofia_norte_km.mp3' },
+                { id: 8, title: '8. របៀបរស់នៅ និងទំនៀមទម្លាប់ភាគខាងជើង', url: BASE_URL + 'khmer/8.costumbres_vida_norte_km.mp3' },
+                { id: 9, title: '9. ព្រះសង្ឃ ជំនឿ និងសាសនានៅភាគខាងជើង', url: BASE_URL + 'khmer/9.monjes_fe_creencias_km.mp3' },
+                { id: 10, title: '10. ម្ហូបអាហារ', url: BASE_URL + 'khmer/10.gastronomia_km.mp3' },
+                { id: 11, title: '11. ទឹកពុះក្ដៅ ម៉ែ កាចាន់', url: BASE_URL + 'khmer/11.aguas_termales_mae_kachan_km.mp3' },
+                { id: 12, title: '12. កុលសម្ព័ន្ធភ្នំនៃ ម៉ែ កាចាន់', url: BASE_URL + 'khmer/12.tribu_montanesa_mae_kachan_km.mp3' },
+                { id: 13, title: '13. វត្តស៖ វត្តរ៉ុងឃុន', url: BASE_URL + 'khmer/13.templo_blanco_wat_rong_khun_km.mp3' },
+                { id: 14, title: '14. វត្តខៀវ៖ វត្តរ៉ុងស៊ឿថេន', url: BASE_URL + 'khmer/14.templo_azul_wat_rong_suea_ten_km.mp3' },
+                { id: 15, title: '15. វត្តហួយផ្លាកាំង', url: BASE_URL + 'khmer/15.templo_huay_pla_kang_km.mp3' },
+                { id: 16, title: '16. សេចក្តីបញ្ចប់ និងការជម្រាបលា', url: BASE_URL + 'khmer/16.saludo_final_km.mp3' }
+            ],
+            नेपाली: [
+                { id: 1, title: '१. परिचय – स्वागत छ', url: BASE_URL + 'nepali/1.introduccion_bienvenida_ne.mp3' },
+                { id: 2, title: '२. चियाङ माईमा आगमन | उत्तरको ढोका', url: BASE_URL + 'nepali/2.llegada_chiang_mai_ne.mp3' },
+                { id: 3, title: '३. जलवायु', url: BASE_URL + 'nepali/3.clima_ne.mp3' },
+                { id: 4, title: '४. उत्तरी थाइल्याण्डमा पर्यटनको प्रभाव', url: BASE_URL + 'nepali/4.impacto_turismo_norte_ne.mp3' },
+                { id: 5, title: '५. उत्तरी थाइल्याण्डको इतिहास', url: BASE_URL + 'nepali/5.historia_norte_ne.mp3' },
+                { id: 6, title: '६. उत्तरको भाषा: खाम मुआङ', url: BASE_URL + 'nepali/6.idioma_kham_mueang_ne.mp3' },
+                { id: 7, title: '७. उत्तरी थाइल्याण्डको दर्शन', url: BASE_URL + 'nepali/7.filosofia_norte_ne.mp3' },
+                { id: 8, title: '८. उत्तरको जीवनशैली र रीतिरिवाज', url: BASE_URL + 'nepali/8.costumbres_vida_norte_ne.mp3' },
+                { id: 9, title: '९. उत्तरमा भिक्षुहरू, आस्था र धार्मिक विश्वासहरू', url: BASE_URL + 'nepali/9.monjes_fe_creencias_ne.mp3' },
+                { id: 10, title: '१०. परिकार तथा खानपान', url: BASE_URL + 'nepali/10.gastronomia_ne.mp3' },
+                { id: 11, title: '११. माई काचान तातो पानीका मुहानहरू', url: BASE_URL + 'nepali/11.aguas_termales_mae_kachan_ne.mp3' },
+                { id: 12, title: '१२. माई काचानका पहाडी जनजातिहरू', url: BASE_URL + 'nepali/12.tribu_montanesa_mae_kachan_ne.mp3' },
+                { id: 13, title: '१३. सेतो मन्दिर: वाट रोङ खुन', url: BASE_URL + 'nepali/13.templo_blanco_wat_rong_khun_ne.mp3' },
+                { id: 14, title: '१४. निलो मन्दिर: वाट रोङ सुए टेन', url: BASE_URL + 'nepali/14.templo_azul_wat_rong_suea_ten_ne.mp3' },
+                { id: 15, title: '१५. हुवे प्ला काङ मन्दिर', url: BASE_URL + 'nepali/15.templo_huay_pla_kang_ne.mp3' },
+                { id: 16, title: '१६. अन्तिम अभिवादन', url: BASE_URL + 'nepali/16.saludo_final_ne.mp3' }
+            ],
+            Српски: [
+                { id: 1, title: '1. Uvod – Dobro došli', url: BASE_URL + 'serbian/1.introduccion_bienvenida_sr.mp3' },
+                { id: 2, title: '2. Dolazak u Čijang Mai | Kapija severa', url: BASE_URL + 'serbian/2.llegada_chiang_mai_sr.mp3' },
+                { id: 3, title: '3. Klima', url: BASE_URL + 'serbian/3.clima_sr.mp3' },
+                { id: 4, title: '4. Uticaj turizma u severnom Tajlandu', url: BASE_URL + 'serbian/4.impacto_turismo_norte_sr.mp3' },
+                { id: 5, title: '5. Istorija severnog Tajlanda', url: BASE_URL + 'serbian/5.historia_norte_sr.mp3' },
+                { id: 6, title: '6. Jezik severa: Kham Mueang', url: BASE_URL + 'serbian/6.idioma_kham_mueang_sr.mp3' },
+                { id: 7, title: '7. Filozofija severnog Tajlanda', url: BASE_URL + 'serbian/7.filosofia_norte_sr.mp3' },
+                { id: 8, title: '8. Način života i običaji severa', url: BASE_URL + 'serbian/8.costumbres_vida_norte_sr.mp3' },
+                { id: 9, title: '9. Monasi, vera i religijska uverenja na severu', url: BASE_URL + 'serbian/9.monjes_fe_creencias_sr.mp3' },
+                { id: 10, title: '10. Gastronomija', url: BASE_URL + 'serbian/10.gastronomia_sr.mp3' },
+                { id: 11, title: '11. Termalni izvori Mae Kachan', url: BASE_URL + 'serbian/11.aguas_termales_mae_kachan_sr.mp3' },
+                { id: 12, title: '12. Planinska plemena Mae Kačana', url: BASE_URL + 'serbian/12.tribu_montanesa_mae_kachan_sr.mp3' },
+                { id: 13, title: '13. Beli hram: Wat Rong Khun', url: BASE_URL + 'serbian/13.templo_blanco_wat_rong_khun_sr.mp3' },
+                { id: 14, title: '14. Plavi hram: Wat Rong Suea Ten', url: BASE_URL + 'serbian/14.templo_azul_wat_rong_suea_ten_sr.mp3' },
+                { id: 15, title: '15. Hram Huay Pla Kang', url: BASE_URL + 'serbian/15.templo_huay_pla_kang_sr.mp3' },
+                { id: 16, title: '16. Završni pozdrav', url: BASE_URL + 'serbian/16.saludo_final_sr.mp3' }
+            ],
+            Slovenščina: [
+                { id: 1, title: '1. Uvod – Dobrodošli', url: BASE_URL + 'slovenian/1.introduccion_bienvenida_sl.mp3' },
+                { id: 2, title: '2. Prihod v Chiang Mai | Vrata severa', url: BASE_URL + 'slovenian/2.llegada_chiang_mai_sl.mp3' },
+                { id: 3, title: '3. Podnebje', url: BASE_URL + 'slovenian/3.clima_sl.mp3' },
+                { id: 4, title: '4. Vpliv turizma v severni Tajski', url: BASE_URL + 'slovenian/4.impacto_turismo_norte_sl.mp3' },
+                { id: 5, title: '5. Zgodovina severne Tajske', url: BASE_URL + 'slovenian/5.historia_norte_sl.mp3' },
+                { id: 6, title: '6. Jezik severa: Kham Mueang', url: BASE_URL + 'slovenian/6.idioma_kham_mueang_sl.mp3' },
+                { id: 7, title: '7. Filozofija severne Tajske', url: BASE_URL + 'slovenian/7.filosofia_norte_sl.mp3' },
+                { id: 8, title: '8. Življenjski slog in običaji severa', url: BASE_URL + 'slovenian/8.costumbres_vida_norte_sl.mp3' },
+                { id: 9, title: '9. Menihi, vera in verska prepričanja na severu', url: BASE_URL + 'slovenian/9.monjes_fe_creencias_sl.mp3' },
+                { id: 10, title: '10. Gastronomija', url: BASE_URL + 'slovenian/10.gastronomia_sl.mp3' },
+                { id: 11, title: '11. Termalni izviri Mae Kachan', url: BASE_URL + 'slovenian/11.aguas_termales_mae_kachan_sl.mp3' },
+                { id: 12, title: '12. Gorska plemena Mae Kachana', url: BASE_URL + 'slovenian/12.tribu_montanesa_mae_kachan_sl.mp3' },
+                { id: 13, title: '13. Beli tempelj: Wat Rong Khun', url: BASE_URL + 'slovenian/13.templo_blanco_wat_rong_khun_sl.mp3' },
+                { id: 14, title: '14. Modri tempelj: Wat Rong Suea Ten', url: BASE_URL + 'slovenian/14.templo_azul_wat_rong_suea_ten_sl.mp3' },
+                { id: 15, title: '15. Tempelj Huay Pla Kang', url: BASE_URL + 'slovenian/15.templo_huay_pla_kang_sl.mp3' },
+                { id: 16, title: '16. Zaključni pozdrav', url: BASE_URL + 'slovenian/16.saludo_final_sl.mp3' }
+            ],
+            Tiếng_Việt: [
+                { id: 1, title: '1. Giới thiệu – Chào mừng', url: BASE_URL + 'vietnamese/1.introduccion_bienvenida_vi.mp3' },
+                { id: 2, title: '2. Đến Chiang Mai | Cửa ngõ miền Bắc', url: BASE_URL + 'vietnamese/2.llegada_chiang_mai_vi.mp3' },
+                { id: 3, title: '3. Khí hậu', url: BASE_URL + 'vietnamese/3.clima_vi.mp3' },
+                { id: 4, title: '4. Tác động của du lịch ở miền Bắc Thái Lan', url: BASE_URL + 'vietnamese/4.impacto_turismo_norte_vi.mp3' },
+                { id: 5, title: '5. Lịch sử miền Bắc Thái Lan', url: BASE_URL + 'vietnamese/5.historia_norte_vi.mp3' },
+                { id: 6, title: '6. Ngôn ngữ miền Bắc: Kham Mueang', url: BASE_URL + 'vietnamese/6.idioma_kham_mueang_vi.mp3' },
+                { id: 7, title: '7. Triết lý của miền Bắc Thái Lan', url: BASE_URL + 'vietnamese/7.filosofia_norte_vi.mp3' },
+                { id: 8, title: '8. Lối sống và phong tục miền Bắc', url: BASE_URL + 'vietnamese/8.costumbres_vida_norte_vi.mp3' },
+                { id: 9, title: '9. Các nhà sư, đức tin và tín ngưỡng tôn giáo ở miền Bắc', url: BASE_URL + 'vietnamese/9.monjes_fe_creencias_vi.mp3' },
+                { id: 10, title: '10. Ẩm thực', url: BASE_URL + 'vietnamese/10.gastronomia_vi.mp3' },
+                { id: 11, title: '11. Suối nước nóng Mae Kachan', url: BASE_URL + 'vietnamese/11.aguas_termales_mae_kachan_vi.mp3' },
+                { id: 12, title: '12. Các bộ tộc miền núi ở Mae Kachan', url: BASE_URL + 'vietnamese/12.tribu_montanesa_mae_kachan_vi.mp3' },
+                { id: 13, title: '13. Chùa Trắng: Wat Rong Khun', url: BASE_URL + 'vietnamese/13.templo_blanco_wat_rong_khun_vi.mp3' },
+                { id: 14, title: '14. Chùa Xanh: Wat Rong Suea Ten', url: BASE_URL + 'vietnamese/14.templo_azul_wat_rong_suea_ten_vi.mp3' },
+                { id: 15, title: '15. Chùa Huay Pla Kang', url: BASE_URL + 'vietnamese/15.templo_huay_pla_kang_vi.mp3' },
+                { id: 16, title: '16. Lời chào kết thúc', url: BASE_URL + 'vietnamese/16.saludo_final_vi.mp3' }
+            ],
+        };
+        // Variables globales
+        let currentLanguage = '';
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+
+
+        const audio = document.getElementById('audioPlayer');
+        const playIcon = document.getElementById('playIcon');
+
+
+        // Inicializar
+        function init() {
+            populateLanguages();
+            setupEventListeners();
+
+        }
+
+        // Poblar idiomas
+        function populateLanguages() {
+            const dropdown = document.getElementById('languageDropdown');
+            dropdown.innerHTML = '';
+            
+            Object.keys(audioDatabase).forEach(lang => {
+                const button = document.createElement('button');
+                button.className = 'language-option';
+                button.textContent = lang.charAt(0).toUpperCase() + lang.slice(1);
+                button.onclick = () => selectLanguage(lang);
+                dropdown.appendChild(button);
+            });
+        }
+
+        // Seleccionar idioma
+        function selectLanguage(lang) {
+            currentLanguage = lang;
+            currentTrackIndex = 0;
+            isPlaying = false;
+            
+            document.getElementById('selectedLanguage').textContent = 
+                lang.charAt(0).toUpperCase() + lang.slice(1);
+            
+            toggleLanguageDropdown();
+            loadPlaylist();
+            showPlayer();
+            loadTrack(0);
+        }
+
+        // Mostrar/ocultar dropdown
+        function toggleLanguageDropdown() {
+            const dropdown = document.getElementById('languageDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Cargar lista de reproducción
+        function loadPlaylist() {
+            const playlistItems = document.getElementById('playlistItems');
+            playlistItems.innerHTML = '';
+            
+            const tracks = audioDatabase[currentLanguage];
+            tracks.forEach((track, index) => {
+                const button = document.createElement('button');
+                button.className = 'playlist-item';
+                if (index === currentTrackIndex) button.classList.add('active');
+                
+                button.innerHTML = `
+                    <div class="playlist-icon">
+                        <svg class="icon-small" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="${isPlaying && index === currentTrackIndex ? 'M6 19h4V5H6v14zm8-14v14h4V5h-4z' : 'M8 5v14l11-7z'}"/>
+                        </svg>
+                    </div>
+                    <div class="playlist-title">${track.title}</div>
+                `;
+                
+                button.onclick = () => selectTrack(index);
+                playlistItems.appendChild(button);
+            });
+        }
+
+        // Mostrar reproductor
+        function showPlayer() {
+            document.getElementById('player').classList.add('show');
+            document.getElementById('playlist').classList.add('show');
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        // Cargar pista
+        function loadTrack(index) {
+            const tracks = audioDatabase[currentLanguage];
+            if (!tracks || !tracks[index]) return;
+            
+            currentTrackIndex = index;
+            const track = tracks[index];
+            
+            audio.src = track.url;
+            document.getElementById('trackTitle').textContent = track.title;
+            document.getElementById('trackLanguage').textContent = 
+                currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
+            
+            loadPlaylist();
+            
+            if (isPlaying) {
+                audio.play();
+            }
+        }
+
+        // Seleccionar pista
+        function selectTrack(index) {
+            loadTrack(index);
+            isPlaying = true;
+            audio.play();
+            updatePlayIcon();
+        }
+
+        // Toggle play/pause
+        function togglePlay() {
+            if (!currentLanguage) return;
+            
+            if (isPlaying) {
+                audio.pause();
+            } else {
+                audio.play();
+            }
+            
+            isPlaying = !isPlaying;
+            updatePlayIcon();
+            loadPlaylist();
+        }
+
+        // Pista anterior
+        function previousTrack() {
+            if (audio.currentTime > 3) {
+                audio.currentTime = 0;
+            } else if (currentTrackIndex > 0) {
+                loadTrack(currentTrackIndex - 1);
+                if (isPlaying) audio.play();
+            }
+        }
+
+        // Pista siguiente
+        function nextTrack() {
+            const tracks = audioDatabase[currentLanguage];
+            if (currentTrackIndex < tracks.length - 1) {
+                loadTrack(currentTrackIndex + 1);
+                if (isPlaying) audio.play();
+            } else {
+                loadTrack(0);
+                isPlaying = false;
+                updatePlayIcon();
+            }
+        }
+
+
+
+        // Actualizar icono de play
+        function updatePlayIcon() {
+            playIcon.innerHTML = isPlaying 
+                ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'
+                : '<path d="M8 5v14l11-7z"/>';
+        }
+
+
+
+        // Formatear tiempo
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Actualizar gradiente de barras
+        function updateProgressGradient(value, max) {
+            const percentage = (value / max) * 100;
+            const isDark = document.body.classList.contains('dark');
+            const bgColor = isDark ? '#374151' : '#e5e7eb';
+            return `linear-gradient(to right, #9f24e7 0%, #f200c4 ${percentage}%, ${bgColor} ${percentage}%, ${bgColor} 100%)`;
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            // Audio events
+            audio.addEventListener('timeupdate', () => {
+                const progressBar = document.getElementById('progressBar');
+                progressBar.max = audio.duration || 0;
+                progressBar.value = audio.currentTime;
+                progressBar.style.background = updateProgressGradient(audio.currentTime, audio.duration);
+                document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
+            });
+
+            audio.addEventListener('loadedmetadata', () => {
+                document.getElementById('duration').textContent = formatTime(audio.duration);
+            });
+
+            audio.addEventListener('ended', () => {
+                nextTrack();
+            });
+
+            // Progress bar
+            document.getElementById('progressBar').addEventListener('input', (e) => {
+                audio.currentTime = e.target.value;
+            });
+
+
+
+            // Cerrar dropdown al hacer clic fuera
+            document.addEventListener('click', (e) => {
+                const dropdown = document.getElementById('languageDropdown');
+                const button = document.querySelector('.language-button');
+                if (!dropdown.contains(e.target) && !button.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+
+
+        }
+
+        // Toggle tema
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            document.body.classList.toggle('light');
+            
+            const isDark = document.body.classList.contains('dark');
+            const icon = document.getElementById('themeIcon');
+            
+            if (isDark) {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
+            } else {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
+            }
+
+            // Actualizar gradientes
+            const progressBar = document.getElementById('progressBar');
+
+            progressBar.style.background = updateProgressGradient(audio.currentTime, audio.duration);
+
+        }
+
+        // Inicializar app
+        window.onload = init;
+    </script>
+</body>
+</html>
